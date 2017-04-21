@@ -1,0 +1,34 @@
+<?php
+
+namespace App\repository;
+
+use App\domain\Customer;
+
+class Customers 
+{
+    
+    
+    public function all()
+    {
+      return Customer::all();  
+    }
+    public function create(CustomerForm $request)
+    {
+      Customer::create($request['type','firstname','lastname','middlename','insured_id','address','contact']);  
+    }
+    public function update()
+    {
+        
+    }
+    public function delete()
+    {
+        
+    }
+    public function findById($id)
+    {
+     return Customer::find($id);   
+    }
+    
+
+    
+}

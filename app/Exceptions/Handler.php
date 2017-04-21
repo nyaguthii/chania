@@ -43,9 +43,24 @@ class Handler extends ExceptionHandler
      * @return \Illuminate\Http\Response
      */
     public function render($request, Exception $exception)
-    {
-        return parent::render($request, $exception);
-    }
+    {   
+        if ($exception instanceof NotFoundHttpException)
+        {
+            if(auth()->check()){
+              return response()->view('http-errors.404'); 
+            }else{
+              return redirect()->route('home');  
+            }
+            
+        }elseif ($exception instanceof ModelNotFoundException)
+        {
+            // Do your stuff here
+            //return response()->view('errors.404');
+        }else{
+          return parent::render($request, $exception);
+    }  
+        }
+        
 
     /**
      * Convert an authentication exception into an unauthenticated response.
