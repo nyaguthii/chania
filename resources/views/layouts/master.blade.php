@@ -9,19 +9,20 @@
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <!-- Bootstrap 3.3.6 -->
-  <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+  <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}">
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css">
   <!-- Ionicons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
   <!-- Theme style -->
-  <link rel="stylesheet" href="/css/AdminLTE.min.css">
+  <link rel="stylesheet" href="{{ asset('css/AdminLTE.min.css') }}">
   <!-- AdminLTE Skins. Choose a skin from the css/skins
        folder instead of downloading all of them to reduce the load. -->
-  <link rel="stylesheet" href="/css/_all-skins.min.css">
-  <link rel="stylesheet" href="/css/datepicker3.css">
-  <link rel="stylesheet" href="/css/flash.css">
-  <link rel="stylesheet" href="/css/dataTables.bootstrap.css">
+  <link rel="stylesheet" href="{{ asset('css/_all-skins.min.css') }}">
+  <link rel="stylesheet" href="{{ asset('css/datepicker3.css') }}">
+  <link rel="stylesheet" href="{{ asset('css/flash.css') }}">
+  <link rel="stylesheet" href="{{ asset('css/dataTables.bootstrap.css') }}">
 
   <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
   <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -50,21 +51,22 @@
 <!-- ./wrapper -->
 
 <!-- jQuery 2.2.3 -->
-<script src="/js/jquery-2.2.3.min.js"></script>
+{{ asset('js/dataTables.bootstrap.min.js') }}
+<script src="{{ asset('js/jquery-2.2.3.min.js') }}"></script>
 <!-- Bootstrap 3.3.6 -->
-<script src="/js/bootstrap.min.js"></script>
+<script src="{{ asset('js/bootstrap.min.js') }}"></script>
 <!-- Slimscroll -->
-<script src="/js/jquery.slimscroll.min.js"></script>
+<script src="{{ asset('js/jquery.slimscroll.min.js') }}"></script>
 <!-- FastClick -->
-<script src="/js/fastclick.js"></script>
+<script src="{{ asset('js/fastclick.js') }}"></script>
 <!-- AdminLTE App -->
-<script src="/js/app.min.js"></script>
+<script src="{{ asset('js/app.min.js') }}"></script>
 <!-- AdminLTE for demo purposes -->
-<script src="/js/demo.js"></script>
-<script src="/js/bootstrap-datepicker.js"></script>
-<script src="/js/sing.js"></script>
-<script src="/js/jquery.dataTables.min.js"></script>
-<script src="/js/dataTables.bootstrap.min.js"></script>
+<script src="{{ asset('js/demo.js') }}"></script>
+<script src="{{ asset('js/fastclick.js') }}"></script>
+<script src="{{ asset('js/sing.js') }}"></script>
+<script src="{{ asset('js/jquery.dataTables.min.js') }}"></script>
+<script src="{{ asset('js/dataTables.bootstrap.min.js') }}></script>
 <script>
     
 
