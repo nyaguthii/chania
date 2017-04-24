@@ -14,8 +14,7 @@ class UpdateStatusPolicies extends Migration
     public function up()
     {
         Schema::table('policies', function (Blueprint $table) {
-            $table->string('total_premium')->nullable()->change();
-            $table->string('status')->nullable()->change();
+            $table->string('status',50)->nullable()->change();
         });
     }
 

@@ -17,10 +17,10 @@ class CreateEndorsementsTable extends Migration
             $table->increments('id');
             $table->timestamps();
             $table->integer('policy_id');
-            $table->string('type');
+            $table->string('type',50);
             //$table->date('date');
             $table->integer('amount');
-            $table->string('description');
+            $table->string('description',50);
             
         });
     }

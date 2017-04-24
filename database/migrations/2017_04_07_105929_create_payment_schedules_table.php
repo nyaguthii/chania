@@ -21,7 +21,7 @@ class CreatePaymentSchedulesTable extends Migration
             $table->date('due_date');
             $table->integer('amount');
             $table->integer('amount_paid');
-            $table->string('status');
+            $table->string('status',50);
             
         });
     }

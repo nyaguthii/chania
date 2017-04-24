@@ -18,10 +18,10 @@ class CreateVehiclesTable extends Migration
             $table->timestamps();
 
 
-            $table->string('registration');
-            $table->string('year');
-            $table->string('make');
-            $table->string('model');
+            $table->string('registration',50);
+            $table->string('year',50);
+            $table->string('make',50);
+            $table->string('model',50);
             $table->integer('customer_id');
         });
     }

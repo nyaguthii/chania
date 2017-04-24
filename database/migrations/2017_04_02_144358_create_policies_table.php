@@ -21,9 +21,9 @@ class CreatePoliciesTable extends Migration
             $table->integer('customer_id');
             $table->date('effective_date');
             $table->date('expiry_date');
-            $table->string('carrier');
+            $table->string('carrier',50);
             $table->integer('total_premium');
-            $table->string('status');
+            $table->string('status',50);
             
         });
     }

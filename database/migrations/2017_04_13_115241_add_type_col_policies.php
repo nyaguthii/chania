@@ -14,7 +14,7 @@ class AddTypeColPolicies extends Migration
     public function up()
     {
         Schema::table('policies', function (Blueprint $table) {
-            $table->string('type')->nullable();
+            $table->string('type',50)->nullable();
         });
     }
 

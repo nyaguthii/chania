@@ -14,7 +14,7 @@ class UpdatePoliciesTable extends Migration
     public function up()
     {
         Schema::table('policies', function (Blueprint $table) {
-            $table->string('durarion');
+            $table->string('durarion',50);
         });
     }
 

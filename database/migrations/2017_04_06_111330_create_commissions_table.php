@@ -19,9 +19,9 @@ class CreateCommissionsTable extends Migration
             $table->integer('endorsement_id');
             //$table->date('effective_date');
             //$table->date('expiry_date');
-            $table->string('amount');
+            $table->integer('amount');
             //$table->integer('total_premium');
-            $table->string('status');
+            $table->string('status',50);
         });
     }
 

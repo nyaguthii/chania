@@ -14,7 +14,7 @@ class AddAgentToPolicies extends Migration
     public function up()
     {
         Schema::table('policies', function (Blueprint $table) {
-            $table->string('agent');
+            $table->string('agent',50);
         });
     }
 
