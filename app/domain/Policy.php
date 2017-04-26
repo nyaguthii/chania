@@ -19,11 +19,11 @@ class Policy extends Model
     public function customer(){
     	return $this->belongsTo(Customer::class);
     }
-    public function setEffectiveDateAttribute($date){
+    /*public function setEffectiveDateAttribute($date){
 
     	$this->attributes['effective_date']=Carbon::createFromFormat('m/d/Y',$date);
     }
-
+*/
     
     public function getVehicleById($id){
 

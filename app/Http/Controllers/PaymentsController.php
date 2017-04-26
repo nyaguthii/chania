@@ -182,15 +182,21 @@ class PaymentsController extends Controller
 
         if($request['is_member']=="all"){
            
-            $payments=DB::table('payments')->select('*', 'payments.id as pid')
+            $payments=DB::table('payments')->select('*', 'payments.id as pid','payments.amount as pamount')
                 ->join('payment_schedules','payments.payment_schedule_id','=','payment_schedules.id')
                 ->join('policies','payment_schedules.policy_id','=','policies.id')
                 ->join('customers','policies.customer_id','=','customers.id')
                 ->join('vehicles','policies.vehicle_id','=','vehicles.id')
                 ->whereBetween('payments.transaction_date',[$start_date,$end_date])
                 ->paginate(20);
+                //$payments=DB::table('payments')->whereBetween('transaction_date',[$start_date,$end_date])->paginate(20);
+
         }else{
-            $payments=DB::table('payments')->select('*', 'payments.id as pid')
+
+            //$payments=DB::table('payments')->whereBetween('transaction_date',[$start_date,$end_date])->paginate(20);
+
+
+            $payments=DB::table('payments')->select('*', 'payments.id as pid','payments.amount as pamount')
                 ->join('payment_schedules','payments.payment_schedule_id','=','payment_schedules.id')
                 ->join('policies','payment_schedules.policy_id','=','policies.id')
                 ->join('customers','policies.customer_id','=','customers.id')

@@ -50,7 +50,7 @@ class EndorsementsController extends Controller
        
        
        //dd($policy->customer()->id);
-       return redirect()->route('policies.generate', ['customer'=>$policy->customer->id,'policy'=>$policy->id])->with('message','Endorsement created Successfully');
+       return redirect()->route('customer.policies.generate', ['customer'=>$policy->customer->id,'policy'=>$policy->id])->with('message','Endorsement created Successfully');
 
 
     
@@ -95,7 +95,7 @@ class EndorsementsController extends Controller
         $policy->status='active';
         $policy->save();
 
-        return redirect()->route('policies.generate', ['customer'=>$policy->customer->id,'policy'=>$policy->id])->with('message','Endorsement updated Successfully');
+        return redirect()->route('customer.policies.generate', ['customer'=>$policy->customer->id,'policy'=>$policy->id])->with('message','Endorsement updated Successfully');
 
 
   

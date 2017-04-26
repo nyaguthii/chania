@@ -21,7 +21,7 @@
               
             </div>
             <!-- /.box-header -->
-            <form action="{{route('policies.store', ['customer' => $customer->id])}}" method="POST">
+            <form action="{{route('customer.policies.store', ['customer' => $customer->id])}}" method="POST">
             <div class="box-body">
               <div class="row">
                 <div class="col-md-6">

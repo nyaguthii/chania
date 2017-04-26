@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\services\CustomerService ;
 use App\domain\Customer;
+use Carbon\Carbon;
 use App\Http\Requests\CustomerForm;
 
 class CustomersController extends Controller
@@ -82,7 +83,18 @@ class CustomersController extends Controller
      */
     public function show(Customer $customer)
     {
-        return view('customers.show',compact('customer'));
+        $date=Carbon::now();
+        $paymentSchedules=DB::table('payment_schedules')->select('*','payment_schedules.id as pid','payment_schedules.amount as pamount')
+                ->join('policies','payment_schedules.policy_id','=','policies.id')
+                ->join('customers','policies.customer_id','=','customers.id')
+                ->join('vehicles','policies.vehicle_id','=','vehicles.id')
+                ->whereDate('payment_schedules.due_date','<',$date)
+                ->where('payment_schedules.status','open')
+                ->where('customers.id',$customer->id)
+                ->orderBy('payment_schedules.id','desc')
+                ->get();
+
+        return view('customers.show',['customer'=>$customer,'paymentSchedules'=>$paymentSchedules]);
     }
 
     /**

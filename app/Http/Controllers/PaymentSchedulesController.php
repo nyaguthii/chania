@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\domain\PaymentSchedule;
 use App\domain\Policy;
+use App\domain\Customer;
 use Carbon\Carbon;
 use App\Http\Requests\ScheduleRequest;
 
@@ -65,7 +67,7 @@ class PaymentSchedulesController extends Controller
         $customer = $policy->customer;
         //session()->flash('payment-schedules-create-message','Schedules created successfully');
         //return view('policies.index',compact('customer'));
-        return redirect()->action('PoliciesController@index',['customer'=>$customer])->with('message','new Payments Generated Created');
+        return redirect()->action('CustomerPoliciesController@index',['customer'=>$customer])->with('message','new Payments Generated Created');
 
     	
     }
@@ -84,12 +86,36 @@ class PaymentSchedulesController extends Controller
 
         $start_date=Carbon::createFromFormat('m/d/Y',$request['start_date']);
         $end_date=Carbon::createFromFormat('m/d/Y',$request['end_date']);
+
         
-        $paymentSchedules=PaymentSchedule::whereDate('due_date',[$start_date,$end_date])
+        
+        $paymentSchedules=PaymentSchedule::whereBetween('due_date',[$start_date,$end_date])
         ->where('status','open')->get();
+        //dd($paymentSchedules);
 
         return view('payments.due',['paymentSchedules'=>$paymentSchedules]);
         
         
+    }
+    public function CustomerDue(Customer $customer,Request $request){
+
+        $date=Carbon::createFromFormat('m/d/Y',$request['date']);
+
+        $this->validate($request,[
+            'date'=>'required|date'
+            ]);
+
+
+        $paymentSchedules=DB::table('payment_schedules')->select('*','payment_schedules.id as pid','payment_schedules.amount as pamount')
+                ->join('policies','payment_schedules.policy_id','=','policies.id')
+                ->join('customers','policies.customer_id','=','customers.id')
+                ->join('vehicles','policies.vehicle_id','=','vehicles.id')
+                ->whereDate('payment_schedules.due_date','<',$date)
+                ->where('payment_schedules.status','open')
+                ->where('customers.id',$customer->id)
+                ->get();
+
+            return view('customers.show',['customer'=>$customer,'paymentSchedules'=>$paymentSchedules]);
+
     }
 }

@@ -62,7 +62,7 @@
                       <label for="policy-id">Amount(Kshs)</label>
                       <input class="form-control" name="amount" id="amount" placeholder="Amount" required>
                   <!-- /.form-group -->
-                </div>
+                    </div>
                 <div class="col-md-12">
                   <div class="row">
                   @include('layouts.error') 

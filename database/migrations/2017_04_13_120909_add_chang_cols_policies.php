@@ -15,7 +15,7 @@ class AddChangColsPolicies extends Migration
     {
         Schema::table('policies', function (Blueprint $table) {
             $table->integer('total_premium')->change();
-            $table->string('policy_no')->change();
+            $table->string('policy_no',50)->change();
         });
     }
 

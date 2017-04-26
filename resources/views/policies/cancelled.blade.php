@@ -68,30 +68,23 @@
             <div class="box-body table-responsive no-padding">
               <table class="table table-hover">
               <tr>
-                  <th></th>
-                  <th></th>
-                  <th></th>
+                  
                   <th></th>
                   <th>ID</th>
                   <th>Policy Number</th>
+                  <th>Customer</th>
                   <th>Effective Date</th>
                   <th>Expiry Date</th>
                   <th>Total Premium</th>
                   <th>Vehicle</th>
                   <th>Status</th>
-                  
                 </tr>
-              @foreach($policies as $policy)
+                @foreach($policies as $policy)
                 <tr>
-                  <td><a href="{{route('customer.policies.generate',['customer'=>$policy->customer->id,'policy'=>$policy->id])}}" class="btn btn-xs btn-info">details</a></td>
                   <td><a href="{{route('customer.policies.show',['customer'=>$policy->customer->id,'policy'=>$policy->id])}}" class="btn btn-xs btn-primary">show</a></td>
-                  <td><a href="{{route('customer.policies.edit',['customer'=>$policy->customer->id,'policy'=>$policy->id])}}" class="btn btn-xs btn-warning">edit</a></td>
-                  <form action="{{route('customer.policies.cancel',['customer'=>$policy->customer->id,'policy'=>$policy->id])}}" method="POST" >
-                  {{ csrf_field() }} 
-                  <td><button  type="submit" class="btn btn-xs btn-danger" onclick="if (!confirm('Are you sure you want to Cancel Policy?')) return false;">Cancel</button></td>
-                  </form>
                   <td>{{$policy->id}}</td>
                   <td>{{$policy->policy_no}}</td>
+                  <td>{{$policy->customer->firstname}} {{$policy->customer->lastname}} </td>
                   <td>{{$policy->effective_date->toDateString()}}</td>
                   <td>{{$policy->expiry_date->toDateString()}}</td>
                   
@@ -112,7 +105,8 @@
                     </span>
                   </td>
                 </tr>
-              @endforeach
+                @endforeach
+
               </table>
               
             </div>

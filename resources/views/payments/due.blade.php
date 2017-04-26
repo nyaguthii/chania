@@ -13,7 +13,7 @@
         <div class="col-xs-12">
           <div class="box">
             <div class="box-header">
-              <p>Start Date</p>    
+              <p>Date</p>    
               
             </div>
             <!-- /.box-header -->
@@ -69,7 +69,7 @@
         <div class="col-xs-12">
         <div class="box box-default">
           <div class="box-header with-border">
-          Generate Payments      
+          Payments Due     
             <div class="box-tools pull-right">
               <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
                <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-remove"></i></button>

@@ -78,7 +78,7 @@
         <div class="col-xs-12">
           <div class="box">
             <div class="box-header with-border">
-            Payments     
+            Payments Done   
               <div class="box-tools">     
                 <div class="box-tools pull-right">
                   <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
@@ -104,7 +104,9 @@
                   <td>{{$payment->transaction_date}}</td>
                   <td>{{$payment->amount}}</td>
                   <td><a href="{{route('receipts.show',['receipt'=>$payment->receipt->id])}}" class="btn btn-xs btn-info">Print Receipt</a></td>
+                  @if($policy->status !=='cancelled')
                   <td><a href="{{route('payments.edit',['customer'=>$customer->id,'payment'=>$payment->id])}}" class="btn btn-xs btn-warning">Edit Payment</a></td>
+                  @endif
               @endforeach
               </table>
             </div>

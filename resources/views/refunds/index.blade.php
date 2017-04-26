@@ -14,9 +14,7 @@
         <div class="col-xs-12">
           <div class="box">
             <div class="box-header">
-              <a href="#" class="btn btn-sm btn-primary"><span class="glyphicon glyphicon-plus"></span> refunds</a>
-
-
+              <p>Refunds</p>
               <div class="box-tools pull-right">
               <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
                <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-remove"></i></button>

@@ -134,6 +134,7 @@
           </div>
         </div> 
       </div>
+      @if($policy->status !== 'cancelled')
       <div class="row">
         <div class="col-xs-12">
           <div class="box">
@@ -200,7 +201,7 @@
           <!-- /.box -->
         </div>      
       </div>
-
+      @endif
     </section>
     <!-- /.content -->
 </div>

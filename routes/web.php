@@ -34,13 +34,18 @@ Route::get('/customers/{customer}','CustomersController@show');
 Route::get('/customers/{customer}/edit','CustomersController@edit')->name('customers.edit');
 Route::post('/customers/{customer}/update','CustomersController@update')->name('customers.update');
 
-Route::get('/customers/{customer}/policies/create','PoliciesController@create')->name('policies.create');
-Route::get('/customers/{customer}/policies','PoliciesController@index')->name('policies.index');
-Route::get('/customers/{customer}/policies/{policy}/generate','PoliciesController@generate')->name('policies.generate');
-Route::get('/customers/{customer}/policies/{policy}','PoliciesController@show')->name('policies.show');
-Route::post('/customers/{customer}/policies','PoliciesController@store')->name('policies.store');
-Route::get('/customers/{customer}/policies/{policy}/edit','PoliciesController@edit')->name('policies.edit');
-Route::post('/customers/{customer}/policies/{policy}/cancel','PoliciesController@cancel')->name('policies.cancel');
+Route::get('/policies','PoliciesController@index')->name('policies.index');
+Route::post('/policies/find','PoliciesController@find')->name('policies.find');
+Route::get('/policies/cancelled','PoliciesController@cancelled')->name('policies.cancelled');
+
+
+Route::get('/customers/{customer}/policies/create','CustomerPoliciesController@create')->name('customer.policies.create');
+Route::get('/customers/{customer}/policies','CustomerPoliciesController@index')->name('customer.policies.index');
+Route::get('/customers/{customer}/policies/{policy}/generate','CustomerPoliciesController@generate')->name('customer.policies.generate');
+Route::get('/customers/{customer}/policies/{policy}','CustomerPoliciesController@show')->name('customer.policies.show');
+Route::post('/customers/{customer}/policies','CustomerPoliciesController@store')->name('customer.policies.store');
+Route::get('/customers/{customer}/policies/{policy}/edit','CustomerPoliciesController@edit')->name('customer.policies.edit');
+Route::post('/customers/{customer}/policies/{policy}/cancel','CustomerPoliciesController@cancel')->name('customer.policies.cancel');
 
 
 Route::post('/policies/{policy}/endorsements','EndorsementsController@store')->name('endorsements.store');
@@ -54,6 +59,7 @@ Route::post('/endorsements/{endorsement}','EndorsementsController@update')->name
 Route::post('/policies/{policy}/paymentSchedules','PaymentSchedulesController@store')->name('paymentSchedules.store');
 Route::get('/paymentSchedules/due','PaymentSchedulesController@dueForm')->name('paymentSchedules.due.form');
 Route::post('/paymentSchedules/due','PaymentSchedulesController@due')->name('paymentSchedules.due');
+Route::post('/paymentSchedules/{customer}/due','PaymentSchedulesController@Customerdue')->name('paymentSchedules.customer.due');
 
 
 Route::get('/customers/{customer}/vehicles','VehiclesController@index')->name('vehicles.index');

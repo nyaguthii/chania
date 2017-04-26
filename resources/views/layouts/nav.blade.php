@@ -64,6 +64,19 @@
             <li><a href="{{route('payments.range.form')}}"><i class="fa fa-circle-o"></i>Payment Period</a></li>
           </ul>
         </li>
+        <li class="treeview active">
+          <a href="#">
+            <i class="fa fa-pie-chart"></i>
+            <span>Policies</span>
+            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+          </a>
+          <ul class="treeview-menu">
+            <li><a href="{{route('policies.index')}}"><i class="fa fa-circle-o"></i>Active</a></li>
+             <li><a href="{{route('policies.cancelled')}}"><i class="fa fa-circle-o"></i>Cancelled</a></li>
+          </ul>
+        </li>
         <li>
           <a href="{{route('refunds.index')}}">
             <i class="fa fa-th"></i> <span>Refunds</span>
