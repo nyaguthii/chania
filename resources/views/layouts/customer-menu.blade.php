@@ -47,7 +47,8 @@
             <span class="info-box-icon bg-yellow"><i class="ion ion-ios-people-outline"></i></span>
 
             <div class="info-box-content">
-              <span class="info-box-text"><a href="#">Receipts</a></span>
+              <span class="info-box-text"><a href="{{route('credits.index',['customer'=>$customer->id])}}">Credit Account</a></span>
+              <span class="info-box-number">Kshs {{number_format($customer->credits->sum('amount')-$customer->creditPayments->sum('amount') )}}</span>
               
             </div>
             <!-- /.info-box-content -->

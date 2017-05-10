@@ -23,36 +23,23 @@
             <div class="box-body table-responsive no-padding">
               <table class="table table-hover">
               <tr>
+                  <th></th>
                   <th>ID</th>
                   <th>Policy</th>
+                  <th>Vehicle</th>
                   <th>Date</th>
-                  <th>Amount</th>
-                  <th>Amount Paid</th>
-                  <th>Status</th>
-                  <th></th>
+                  <th>Premium Amount(Kshs)</th>
+                  <th>Commission(kshs)</th>
                 </tr>
               @foreach($commissions as $commission)
                 <tr>
-                  <td><a href="#" class="btn btn-xs btn-info">Show</a></td>
+                  <td></td>
                   <td>{{$commission->id}}</td>
-                  <td>{{$commission->endorsement->policy->policy_no}}</td>
+                  <td>{{$commission->policy->policy_no}}</td>
+                  <td>{{$commission->policy->vehicle->registration}}</td>
                   <td>{{$commission->created_at->toDateString()}}</td>
-                  <td>{{$commission->amount}}</td>
-                  <td>{{$commission->payments->sum('amount')}}</td>
-                  <td>
-                  <span 
-                        @if($commission->status === 'open')
-                        class="label label-danger"
-                        @elseif($commission->status === 'paid')
-                        class="label label-success"
-                        @endif
-                      >{{$commission->status}}
-                    </span>
-                  </td>
-                  <td>
-                    <a href="{{route('commission.payments.create',['commission'=>$commission->id])}}" class="btn btn-xs btn-info">Take Payment</a>
-                  </td>
-
+                  <td>{{number_format($commission->amount)}}</td>
+                  <td>{{number_format($commission->amount*0.1-$commission->amount*0.01)}}</td>
                 </tr>
               @endforeach
               </table>

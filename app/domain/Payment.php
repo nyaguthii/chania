@@ -13,6 +13,9 @@ class Payment extends Model
     public function receipt(){
     	return $this->hasOne(Receipt::class);
     }
+    public function credit(){
+    	return $this->hasOne(Credit::class);
+    }
 
     
 }

@@ -36,13 +36,12 @@
             {{$receipt->payment->paymentSchedule->policy->customer->lastname}}</strong><br>
             {{$receipt->payment->paymentSchedule->policy->customer->address}}<br>
             {{$receipt->payment->paymentSchedule->policy->customer->contact}}<br>
-            Phone: (555) 539-1037<br>
-            Email: john.doe@example.com
+            <br>
           </address>
         </div>
         <!-- /.col -->
         <div class="col-sm-4 invoice-col">
-          <b>Receipt #{{$receipt->id}}</b><br>
+          <b>Receipt #Ow{{$receipt->id}}</b><br>
           <br>
           <b>Vehicle Reg:</b> {{$receipt->payment->paymentSchedule->policy->vehicle->registration}}<br>
           <b>Policy no:</b> {{$receipt->payment->paymentSchedule->policy->policy_no}}<br>

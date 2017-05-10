@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\services\CustomerService ;
 use App\domain\Customer;
+use Carbon\Carbon;
 use App\Http\Requests\CustomerForm;
 
 class CustomersController extends Controller
@@ -31,7 +32,7 @@ class CustomersController extends Controller
         //$customers=DB::table('customers');
         //$customers=DB::table('customers')->paginate(10);
         $customers=DB::table('customers')->where('is_member','=',$is_member)->paginate(30);
-        return view('customers.index',compact('customers'));
+        return view('customers.index',['customers'=>$customers,'is_member'=>$is_member]);
     }
 
     /**
@@ -67,6 +68,7 @@ class CustomersController extends Controller
        $customer->insured_id=$request['insured_id'];
        $customer->address=$request['address'];
        $customer->contact=$request['contact'];
+       $customer->pin=$request['pin'];
        $customer->is_member=$is_member;
 
        $customer->save();
@@ -82,7 +84,19 @@ class CustomersController extends Controller
      */
     public function show(Customer $customer)
     {
-        return view('customers.show',compact('customer'));
+        $date=Carbon::now();
+        $paymentSchedules=DB::table('payment_schedules')->select('*','payment_schedules.id as pid','payment_schedules.amount as pamount')
+                ->join('policies','payment_schedules.policy_id','=','policies.id')
+                ->join('customers','policies.customer_id','=','customers.id')
+                ->join('vehicles','policies.vehicle_id','=','vehicles.id')
+                ->whereDate('payment_schedules.due_date','<',$date)
+                ->where('payment_schedules.status','open')
+                ->where('payment_schedules.lifeline_status','active')
+                ->where('customers.id',$customer->id)
+                ->orderBy('payment_schedules.id','desc')
+                ->get();
+
+        return view('customers.show',['customer'=>$customer,'paymentSchedules'=>$paymentSchedules]);
     }
 
     /**
@@ -118,6 +132,7 @@ class CustomersController extends Controller
         $customer->insured_id=$request['insured_id'];
         $customer->address=$request['address'];
         $customer->contact=$request['contact'];
+        $customer->pin=$request['pin'];
         $customer->is_member=$is_member;
 
         $customer->save();
@@ -134,5 +149,18 @@ class CustomersController extends Controller
     public function destroy($id)
     {
         //
+    }
+    public function find($is_member,Request $request){
+
+        $this->validate($request,[
+            'insured_id'=>'required|numeric'
+            ]);
+
+        $customers=DB::table('customers')
+        ->where('is_member',$is_member)
+        ->where('insured_id',$request['insured_id'])
+        ->paginate(30);
+        return view('customers.index',['customers'=>$customers,'is_member'=>$is_member]);
+
     }
 }

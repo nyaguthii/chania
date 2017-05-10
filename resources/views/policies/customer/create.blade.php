@@ -21,7 +21,7 @@
               
             </div>
             <!-- /.box-header -->
-            <form action="{{route('policies.store', ['customer' => $customer->id])}}" method="POST">
+            <form action="{{route('customer.policies.store', ['customer' => $customer->id])}}" method="POST">
             <div class="box-body">
               <div class="row">
                 <div class="col-md-6">
@@ -47,6 +47,7 @@
                       <label>Period</label>
                       <select  class="form-control" name="duration_type" id="duration" >
                         <option>Annual</option>
+                        <option>Ten Months</option>
                         <option>Semi Annual</option>
                         <option>Quartely</option>
                         <option>Monthly</option>

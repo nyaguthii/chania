@@ -58,6 +58,18 @@
                       <input class="form-control" name="amount" id="amount" value="{{$payment->amount}}" required>
                   <!-- /.form-group -->
                 </div>
+                <div class="form-group">
+                      <label>Type</label>
+                      <select  class="form-control" name="type"  >
+                        <option>Agency</option>
+                        <option>Owner</option>
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <label >Description</label>
+                      <input class="form-control" name="description" value="{{$payment->description}}">
+                  <!-- /.form-group -->
+                    </div>
                 <div class="col-md-12">
                   <div class="row">
                   @include('layouts.error') 

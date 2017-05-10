@@ -69,29 +69,20 @@
           <div class="box-body table-responsive no-padding">
             <table class="table table-hover">
             <tr>
-                <th>Id</th>
                 <th>Date</th>
-                <th>Policy</th>
-                <th>Customer</th>
-                <th>Vehicle</th>
-                <th>Amount</th>
+                <th>Amount(Kshs)</th>
                                
               </tr>
               @foreach($payments as $payment)
               <tr>
-                <td>{{$payment->id}}</td>
-                <td>{{$payment->created_at->toDateString()}}</td>
-                <td>{{$payment->paymentSchedule->policy->policy_no}}</td>
-                <td>{{$payment->paymentSchedule->policy->customer->firstname}} {{$payment->paymentSchedule->policy->customer->lastname}}</td>
-                <td>{{$payment->paymentSchedule->policy->vehicle->registration}}</td>
-                <td>{{$payment->amount}}</td>
-                               
+                <td>{{$payment->transaction_date}}</td>
+                <td>{{number_format($payment->amount)}}</td>                 
               </tr>
               @endforeach
             </table>
           </div>
           <div class="box-footer">
-           <button type="button" class="btn btn-primary pull-right">Total Kshs:{{$payments->sum('amount')}}</button>
+           <button type="button" class="btn btn-primary pull-right">Total Kshs:{{number_format($payments->sum('amount'))}}</button>
           </div>
         
           <!-- /.box-body -->

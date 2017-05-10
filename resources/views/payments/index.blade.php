@@ -40,7 +40,11 @@
                   <td>{{$payment->paymentSchedule->id}}</td>
                   <td>{{$payment->transaction_date}}</td>
                   <td>{{$payment->amount}}</td>
+                  @if($payment->receipt)
                   <td><a href="{{route('receipts.show',['receipt'=>$payment->receipt->id])}}" class="btn btn-xs btn-info">Print Receipt</a></td>
+                  @elseif(!$payment->receipt)
+                  <td></td>
+                  @endif
                   <td><a href="{{route('payments.edit',['customer'=>$customer->id,'payment'=>$payment->id])}}" class="btn btn-xs btn-warning">Edit Payment</a></td>
                 </tr>
               @endforeach
@@ -55,10 +59,9 @@
             <div class="box-footer">
               <button type="button" class="btn btn-primary pull-right"> Total(Kshs) {{$payments->sum('amount')}}</button>
             </div>
-        </div>
-         @endforeach       
+      </div>
+      @endforeach       
     </section>
     <!-- /.content -->
-</div>
-  
+</div>  
 @endsection

@@ -14,9 +14,9 @@ class Endorsement extends Model
     	return $this->belongsTo(Policy::class);
     }
 
-    public function commission(){
+    /*public function commission(){
     	return $this->hasOne(Commission::class);
-    }
+    }*/
     public function calculateCommission($rate){
      
      

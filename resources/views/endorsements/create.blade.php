@@ -56,15 +56,6 @@
                 <!-- /.col -->
                 <div class="col-md-6">              
                   <!-- /.form-group -->
-                    <div class="form-group">
-                        <label for="commission-percent">Commission Percentage</label>
-                        <input class="form-control" name="commission-percent" id="commission-percent" placeholder="%" >
-                      </div>
-                      <div class="form-group">
-                        <label for="commission-amount">Commission Amount(Kshs)</label>
-                        <input class="form-control" id="commission-amount" name="commission-amount" >
-                      </div>
-                  <!-- /.form-group -->
                 </div>
 
                 <!-- /.col -->

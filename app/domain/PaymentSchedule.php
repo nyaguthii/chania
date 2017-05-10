@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class PaymentSchedule extends Model
 {
-    protected $fillable = ['type', 'amount', 'amount_paid','policy_id','due_date','status'];
+    protected $fillable = ['type', 'amount', 'amount_paid','policy_id','due_date','status','lifeline_status'];
 
     public function policy(){
 
@@ -17,4 +17,5 @@ class PaymentSchedule extends Model
 
     	return $this->hasMany(Payment::class);
     }
+    
 }

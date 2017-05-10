@@ -33,19 +33,19 @@
                       <div class="form-group">
                         <div class="radio">
                           <label>
-                            <input type="radio" name="is_member" id="optionsRadios1" value="yes" checked>
+                            <input type="radio" name="is_member" id="optionsRadios1" value="1" >
                             Members
                           </label>
                         </div>
                         <div class="radio">
                           <label>
-                            <input type="radio" name="is_member" id="optionsRadios2" value="no">
+                            <input type="radio" name="is_member" id="optionsRadios2" value="0">
                             Non Members
                           </label>
                         </div>
                         <div class="radio">
                           <label>
-                            <input type="radio" name="is_member" id="optionsRadios3" value="all" >
+                            <input type="radio" name="is_member" id="optionsRadios3" value="all" checked>
                             All
                           </label>
                         </div>
@@ -118,7 +118,7 @@
                 <td>{{$payment->policy_no}}</td>
                 <td>{{$payment->firstname}} {{$payment->lastname}}</td>
                 <td>{{$payment->registration}}</td>
-                <td>{{$payment->amount}}</td>
+                <td>{{$payment->pamount}}</td>
                                
               </tr>
               @endforeach

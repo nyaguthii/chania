@@ -77,17 +77,21 @@
     $('#datepicker').datepicker({
       autoclose: true
     });
+    $('#suspenddatepicker').datepicker({
+      autoclose: true
+    });
+    $('#activatedatepicker').datepicker({
+      autoclose: true
+    });
+    $('#sustaindatepicker').datepicker({
+      autoclose: true
+    });
     $('#endDate').datepicker({
       autoclose: true
     });
     $('#datepicker-endorsement').datepicker({
       autoclose: true
-    });
-
-    $( '.commission-add-div' ).hide();
-    $( '.add-commission-button' ).click(function() {
-      $( '.commission-add-div' ).show();
-    });
+    });  
 
     $("#commission-percent").change(function(){
 
@@ -120,6 +124,9 @@
         switch (period) {
           case 'Annual':
               x = 12;
+              break;
+          case 'Ten Months':
+              x = 10;
               break;
           case 'Semi Annual':
               x = 6;

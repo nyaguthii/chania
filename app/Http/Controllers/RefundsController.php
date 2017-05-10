@@ -9,7 +9,12 @@ use Carbon\Carbon;
 
 class RefundsController extends Controller
 {
-	public function index(){
+	
+  public function __construct()
+    {
+        $this->middleware('auth');
+    }
+  public function index(){
 
 		$refunds=Refund::latest()->paginate(30);
 
