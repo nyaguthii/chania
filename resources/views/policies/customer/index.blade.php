@@ -32,12 +32,11 @@
                   <th></th>
                   <th></th>
                   <th></th>
-                  <th></th>
                   <th>ID</th>
                   <th>Policy Number</th>
                   <th>Effective Date</th>
                   <th>Expiry Date</th>
-                  <th>Total Premium</th>
+                  <th>Total Premium(Kshs)</th>
                   <th>Vehicle</th>
                   <th>Status</th>
                   
@@ -46,28 +45,26 @@
                 <tr>
                   <td><a href="{{route('customer.policies.generate',['customer'=>$customer->id,'policy'=>$policy->id])}}" class="btn btn-xs btn-info">details</a></td>
                   <td><a href="{{route('customer.policies.show',['customer'=>$customer->id,'policy'=>$policy->id])}}" class="btn btn-xs btn-primary">show</a></td>
-                  <td><a href="{{route('customer.policies.edit',['customer'=>$customer->id,'policy'=>$policy->id])}}" class="btn btn-xs btn-warning">edit</a></td>
-                  <form action="{{route('customer.policies.cancel',['customer'=>$customer->id,'policy'=>$policy->id])}}" method="POST" >
-                  {{ csrf_field() }} 
-                  <td><button  type="submit" class="btn btn-xs btn-danger" onclick="if (!confirm('Are you sure you want to Cancel Policy?')) return false;">Cancel</button></td>
-                  </form>
+                  <td><a href="{{route('customer.policies.edit',['customer'=>$customer->id,'policy'=>$policy->id])}}" class="btn btn-xs btn-default">edit</a></td>
                   <td>{{$policy->id}}</td>
                   <td>{{$policy->policy_no}}</td>
                   <td>{{$policy->effective_date->toDateString()}}</td>
                   <td>{{$policy->expiry_date->toDateString()}}</td>
                   
-                  <td>{{$policy->total_premium}}</td>
+                  <td>{{number_format($policy->total_premium)}}</td>
                   <td>{{$policy->vehicle->registration}}</td>
                   <td>
                     <span 
                         @if($policy->status === 'active')
                         class="label label-success"
                         @elseif($policy->status === 'expired')
-                        class="label label-warning"
+                        class="label label-default"
                         @elseif($policy->status === 'cancelled')
                         class="label label-danger"
                         @elseif($policy->status === 'drafted')
                         class="label label-primary"
+                        @elseif($policy->status === 'suspended')
+                        class="label label-warning"
                         @endif
                       >{{$policy->status}}
                     </span>

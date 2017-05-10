@@ -9,7 +9,47 @@
     <!-- Main content -->
     <section class="content">
       <!-- /.row -->
-      
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="box">
+            <div class="box-header">
+              <p>Search</p>
+              <div class="box-tools pull-right">
+              <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+               <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-remove"></i></button>
+            </div>
+            </div>
+            <!-- /.box-header -->
+            <form action="{{route('customers.find',['is_member'=>$is_member])}}" method="POST">
+            {{ csrf_field() }}
+            <div class="box-body">
+              <div class="row">
+                <div class="col-md-5">
+                      <div class="form-group">
+                      <label >Insured ID</label>
+                      <input class="form-control" name="insured_id">
+                  <!-- /.form-group -->
+                    </div>
+                </div>
+                <div class="col-md-2">              
+                  <!-- /.form-group -->
+                  <div class="form-group" style="margin-top:25px">
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                  </div>
+              </div>
+              </div>
+
+                
+              <div class="row">
+                @include('layouts.error') 
+              </div>   
+            </div>
+            </form>
+            <!-- /.box-body -->
+          </div>
+          <!-- /.box -->
+        </div>
+      </div>
       <div class="row">
         <div class="col-xs-12">
           <div class="box">
@@ -31,6 +71,7 @@
                   <th>First Name</th>
                   <th>Last Name</th>
                   <th>Insured ID</th>
+                  <th>Pin</th>
                   <th>Is Member</th>
                   <th></th>
                 </tr>
@@ -40,6 +81,7 @@
                   <td>{{$customer->firstname}}</td>
                   <td>{{$customer->lastname}}</td>
                   <td>{{$customer->insured_id}}</td>
+                  <td>{{$customer->pin}}</td>
                   <td>
                    <span 
                         @if($customer->is_member ==0)
@@ -56,7 +98,7 @@
                     </span>
                   </td>
                   <td><a href="{{route('customers.edit',['customer'=>$customer->id])}}" class="btn btn-xs btn-warning">edit</a></td>
-                  <td><a href="/customers/{{$customer->id}}" class="btn btn-xs btn-info">details</a></td>
+                  <td><a href="{{route('customers.show',['customer'=>$customer->id])}}" class="btn btn-xs btn-info">details</a></td>
                 </tr>
               @endforeach
 
@@ -77,5 +119,5 @@
     </section>
     <!-- /.content -->
 </div>
-  
+ 
 @endsection

@@ -9,6 +9,10 @@ use App\domain\Vehicle;
 
 class PoliciesController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
     public function index(){
 
     	$policies=Policy::where('status','active')->orderBy('id','desc')->paginate(40);
@@ -28,10 +32,12 @@ class PoliciesController extends Controller
 
 
     }
-    public function cancelled(){
-        $policies=Policy::where('status','cancelled')->orderBy('id','desc')->paginate(40);
+    public function status($status){
+        
+        $policies=Policy::where('status',$status)->orderBy('id','desc')->paginate(40);
 
-        return view('policies.cancelled',['policies'=>$policies]);
+        return view('policies.status',['policies'=>$policies]);
 
     }
+    
 }

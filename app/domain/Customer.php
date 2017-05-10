@@ -33,4 +33,12 @@ class Customer extends Model
         //->join('policies','payment_schedules.policy_id','=','policies.id')->where('policies.customer_id','=',$this->id)
         ->get();
      }
+     public function credits(){
+
+        return $this->hasMany(Credit::class);
+     }
+     public function creditPayments(){
+        
+        return $this->hasMany(CreditPayment::class);
+     }
 }

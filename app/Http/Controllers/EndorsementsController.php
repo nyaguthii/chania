@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\domain\Endorsement as Endorsement;
 use App\domain\Policy as Policy;
-use App\domain\Commission as Commission;
 use App\Http\Requests\EndorsementRequest;
 
 
@@ -29,13 +28,6 @@ class EndorsementsController extends Controller
         'policy_id'=>$policy->id]
         );
 
-       $percentage=$request['commission-percent'];
-       $percentageAmount=($percentage*$request['amount'])/100;
-
-       $commission = new Commission();
-       $commission->amount=$percentageAmount;
-       $commission->status="open";
-       $endorsement->commission()->save($commission);
 
        $total=0;
 

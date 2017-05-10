@@ -78,6 +78,9 @@ class CustomerPoliciesController extends Controller
             case 'Annual':
                 $x=12;
                 break;
+            case 'Ten Months':
+                $x=10;
+                break;    
             case 'Semi Annual':
                 $x=6;
                 break;
@@ -158,7 +161,18 @@ class CustomerPoliciesController extends Controller
         //
     }
 
-    public function cancel(Customer $customer,Policy $policy){
+    public function cancel(Customer $customer,Policy $policy,Request $request){
+        $this->validate($request,[
+          'effective_date'=>'required'
+          ]);
+        $effective_date=Carbon::createFromFormat('m/d/Y',$request['effective_date']);
+
+        $paymentSchedules=$policy->paymentSchedules()->whereDate('due_date','>',$effective_date)->get();
+
+        foreach($paymentSchedules as $paymentSchedule){
+          $paymentSchedule->lifeline_status="cancelled";
+          $paymentSchedule->save();
+        }
 
         $policy->status='cancelled';
         $policy->save();
@@ -166,6 +180,75 @@ class CustomerPoliciesController extends Controller
         session()->flash('policy-cancel-message','policy Cancelled successfully');
         //return view('policies.index',compact('customer')); 
         return redirect()->route('customer.policies.index',['customer'=>$customer]);  
+
+
+    }
+    public function suspend(Customer $customer,Policy $policy,Request $request){
+
+        $this->validate($request,[
+            'effective_date'=>'required'
+            ]);
+        $effective_date=Carbon::createFromFormat('m/d/Y',$request['effective_date']);
+
+        $paymentSchedules=$policy->paymentSchedules()->whereDate('due_date','>',$effective_date)->get();
+
+        foreach($paymentSchedules as $paymentSchedule){
+          $paymentSchedule->lifeline_status="suspended";
+          $paymentSchedule->save();
+        }
+
+        $policy->status='suspended';
+        $policy->save();
+
+        session()->flash('message-warning','policy Suspended successfully');
+        //return view('policies.index',compact('customer')); 
+        return redirect()->route('customer.policies.index',['customer'=>$customer]); 
+
+    }
+    public function activate(Customer $customer,Policy $policy,Request $request){
+
+      $this->validate($request,[
+            'effective_date'=>'required'
+            ]);
+        $effective_date=Carbon::createFromFormat('m/d/Y',$request['effective_date']);
+
+        $paymentSchedules=$policy->paymentSchedules()->whereDate('due_date','>',$effective_date)->get();
+
+        foreach($paymentSchedules as $paymentSchedule){
+          $paymentSchedule->lifeline_status="active";
+          $paymentSchedule->save();
+        }
+
+        $policy->status='active';
+        $policy->save();
+
+        session()->flash('message-active','policy Activate successfully');
+        //return view('policies.index',compact('customer')); 
+        return redirect()->route('customer.policies.index',['customer'=>$customer]); 
+
+
+    }
+
+    public function sustain(Customer $customer,Policy $policy,Request $request){
+
+      $this->validate($request,[
+            'effective_date'=>'required'
+            ]);
+        $effective_date=Carbon::createFromFormat('m/d/Y',$request['effective_date']);
+
+        $paymentSchedules=$policy->paymentSchedules()->whereDate('due_date','>',$effective_date)->get();
+
+        foreach($paymentSchedules as $paymentSchedule){
+          $paymentSchedule->lifeline_status="active";
+          $paymentSchedule->save();
+        }
+
+        $policy->status='active';
+        $policy->save();
+
+        session()->flash('message-sustain','policy Sustained successfully');
+        //return view('policies.index',compact('customer')); 
+        return redirect()->route('customer.policies.index',['customer'=>$customer]); 
 
 
     }

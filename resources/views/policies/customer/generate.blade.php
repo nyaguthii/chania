@@ -134,7 +134,6 @@
           </div>
         </div> 
       </div>
-      @if($policy->status !== 'cancelled')
       <div class="row">
         <div class="col-xs-12">
           <div class="box">
@@ -157,7 +156,8 @@
                   <th>Premium</th>
                   <th>Amount Paid</th>
                   <th>Balance</th>
-                  <th>Status</th>
+                  <th>Life Status</th>
+                  <th>Payment Status</th>
                   <th></th>               
                 </tr>
               @foreach($policy->paymentSchedules as $paymentSchedule)
@@ -167,6 +167,7 @@
                   <td>{{$paymentSchedule->amount}}</td>
                   <td>{{$paymentSchedule->amount_paid}}</td>
                   <td>{{$paymentSchedule->amount-$paymentSchedule->amount_paid}}</td>
+                  <td>{{$paymentSchedule->lifeline_status}}</td>
                   <td>
                     <span 
                         @if($paymentSchedule->status === 'open')
@@ -179,10 +180,12 @@
 
                   </td>
                   <td>
+                  @if($paymentSchedule->lifeline_status === 'active')
                   @if($paymentSchedule->status === 'open')
                   <a href="{{route('payments.create',['paymentSchedule'=>$paymentSchedule->id])}}" class="btn btn-xs btn-info">Take Payment</a>
                   @elseif($paymentSchedule->status === 'paid')
                   <a href="#" class="btn btn-xs btn-warning">View Payment</a>
+                  @endif
                   @endif
                   </td>
                 </tr>  
@@ -201,7 +204,6 @@
           <!-- /.box -->
         </div>      
       </div>
-      @endif
     </section>
     <!-- /.content -->
 </div>

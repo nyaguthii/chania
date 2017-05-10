@@ -47,6 +47,7 @@
                       <label>Period</label>
                       <select  class="form-control" name="duration_type" id="duration" >
                         <option>Annual</option>
+                        <option>Ten Months</option>
                         <option>Semi Annual</option>
                         <option>Quartely</option>
                         <option>Monthly</option>

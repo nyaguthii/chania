@@ -30,13 +30,22 @@ Route::post('/register','RegistrationController@store');*/
 Route::get('/customers/{is_member}/index','CustomersController@index')->name('customers.index');
 Route::get('/customers/create','CustomersController@create');
 Route::post('/customers','CustomersController@store');
-Route::get('/customers/{customer}','CustomersController@show');
+Route::get('/customers/{customer}','CustomersController@show')->name('customers.show');
 Route::get('/customers/{customer}/edit','CustomersController@edit')->name('customers.edit');
 Route::post('/customers/{customer}/update','CustomersController@update')->name('customers.update');
+Route::post('/customers/{is_member}/find','CustomersController@find')->name('customers.find');
+
+Route::get('/customers/{customer}/creditpayments/create','CreditPaymentsController@create')->name('creditpayments.create');
+Route::post('/customers/{customer}/creditpayments','CreditPaymentsController@store')->name('creditpayments.store');
+Route::get('/creditpayments/{creditPayment}/edit','CreditPaymentsController@edit')->name('creditpayments.edit');
+Route::post('/creditpayments/{creditPayment}/update','CreditPaymentsController@update')->name('creditpayments.update');
+
+
 
 Route::get('/policies','PoliciesController@index')->name('policies.index');
 Route::post('/policies/find','PoliciesController@find')->name('policies.find');
-Route::get('/policies/cancelled','PoliciesController@cancelled')->name('policies.cancelled');
+Route::get('/policies/{status}','PoliciesController@status')->name('policies.status');
+Route::get('/policies/expired','PoliciesController@expired')->name('policies.expired');
 
 
 Route::get('/customers/{customer}/policies/create','CustomerPoliciesController@create')->name('customer.policies.create');
@@ -46,7 +55,15 @@ Route::get('/customers/{customer}/policies/{policy}','CustomerPoliciesController
 Route::post('/customers/{customer}/policies','CustomerPoliciesController@store')->name('customer.policies.store');
 Route::get('/customers/{customer}/policies/{policy}/edit','CustomerPoliciesController@edit')->name('customer.policies.edit');
 Route::post('/customers/{customer}/policies/{policy}/cancel','CustomerPoliciesController@cancel')->name('customer.policies.cancel');
+Route::post('/customers/{customer}/policies/{policy}/suspend','CustomerPoliciesController@suspend')->name('customer.policies.suspend');
+Route::post('/customers/{customer}/policies/{policy}/activate','CustomerPoliciesController@activate')->name('customer.policies.activate');
+Route::post('/customers/{customer}/policies/{policy}/sustain','CustomerPoliciesController@sustain')->name('customer.policies.sustain');
 
+Route::get('/customers/{customer}/credits/create','CreditsController@create')->name('credits.create');
+Route::get('/customers/{customer}/credits','CreditsController@index')->name('credits.index');
+Route::post('/customers/{customer}/credits','CreditsController@store')->name('credits.store');
+Route::get('/credits/{credit}/edit','CreditsController@edit')->name('credits.edit');
+Route::post('/credits/{credit}/update','CreditsController@update')->name('credits.update');
 
 Route::post('/policies/{policy}/endorsements','EndorsementsController@store')->name('endorsements.store');
 Route::get('/policies/{policy}/endorsements/create','EndorsementsController@create')->name('endorsements.create');
@@ -79,14 +96,19 @@ Route::post('/payments/daily','PaymentsController@getDaily')->name('payments.dai
 Route::get('/payments/range','PaymentsController@showRangeForm')->name('payments.range.form');
 Route::post('/payments/range','PaymentsController@getRange')->name('payments.range');
 
-
+Route::get('/payments/totalperday','PaymentsController@totalPerDay')->name('payments.totalperday');
 
 
 Route::get('/commissions','CommissionsController@index')->name('commissions.index');
-Route::get('/commissions/{commission}/create','CommissionPaymentsController@create')->name('commission.payments.create');
-Route::post('/commissions/{commission}/payments','CommissionPaymentsController@store')->name('commission.payments.store');
+//Route::get('/commissions/{commission}','CommissionsController@show')->name('commissions.show');
+
+//Route::get('/commissions/{commission}/create','CommissionPaymentsController@create')->name('commission.payments.create');
+//Route::post('/commissions/{commission}/payments','CommissionPaymentsController@store')->name('commission.payments.store');
+//Route::get('/commissions/{commission}/payments/{commissionPayment}','CommissionPaymentsController@edit')->name('commissions.payments.edit');
+//Route::post('/commissions/{commission}/payments/{commissionPayment}/update','CommissionPaymentsController@update')->name('commissions.payments.update');
 
 Route::get('/receipts/{receipt}','ReceiptsController@show')->name('receipts.show');
+Route::get('/creditreceipts/{receipt}','CreditReceiptsController@show')->name('creditReceipts.show');
 
 Route::post('/policies/{policy}/refunds','RefundsController@store')->name('refunds.store');
 Route::get('/policies/{policy}/refunds/create','RefundsController@create')->name('refunds.create');

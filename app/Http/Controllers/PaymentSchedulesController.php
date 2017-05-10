@@ -40,7 +40,8 @@ class PaymentSchedulesController extends Controller
             'due_date'=>$policy->expiry_date,
             'amount'=>$policy->total_premium,
             'amount_paid'=>0,
-            'status'=>'open'
+            'status'=>'open',
+            'lifeline_status'=>'active'
             ]);
 
         }else{
@@ -55,7 +56,8 @@ class PaymentSchedulesController extends Controller
                 'due_date'=>$dueDate,
                 'amount'=>$premium,
                 'amount_paid'=>0,
-                'status'=>'open'
+                'status'=>'open',
+                'lifeline_status'=>'active'
                 ]);
               $dueDate=$dueDate->addMonths(1);
 
@@ -67,7 +69,7 @@ class PaymentSchedulesController extends Controller
         $customer = $policy->customer;
         //session()->flash('payment-schedules-create-message','Schedules created successfully');
         //return view('policies.index',compact('customer'));
-        return redirect()->action('CustomerPoliciesController@index',['customer'=>$customer])->with('message','new Payments Generated Created');
+        return redirect()->action('CustomerPoliciesController@index',['customer'=>$customer])->with('message','new Payments Generated ');
 
     	
     }
@@ -90,7 +92,9 @@ class PaymentSchedulesController extends Controller
         
         
         $paymentSchedules=PaymentSchedule::whereBetween('due_date',[$start_date,$end_date])
-        ->where('status','open')->get();
+        ->where('status','open')
+        ->where('lifeline_status','active')
+        ->get();
         //dd($paymentSchedules);
 
         return view('payments.due',['paymentSchedules'=>$paymentSchedules]);

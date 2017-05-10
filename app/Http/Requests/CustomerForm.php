@@ -31,7 +31,8 @@ class CustomerForm extends FormRequest
             'insured_id' => 'required|unique:customers',
             'firstname' => 'required',
             'address' => 'required',
-            'contact' => 'required'
+            'contact' => 'required',
+            'pin' => 'required'
         ];
     }
 }

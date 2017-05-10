@@ -104,5 +104,8 @@ class Policy extends Model
     public function refund(){
         return $this->hasOne(Refund::class);
     }
+    public function claims(){
+        return $this->hasMany(Claim::class);
+    }
     
 }

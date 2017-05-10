@@ -12,8 +12,12 @@
       <div class="row">
         <div class="col-xs-12">
           <div class="box">
-            <div class="box-header"> 
-            <p>Search</p>             
+            <div class="box-header">
+              <p>Search</p>
+              <div class="box-tools pull-right">
+              <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+               <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-remove"></i></button>
+            </div>
             </div>
             <!-- /.box-header -->
             <form action="{{route('policies.find')}}" method="POST">
@@ -102,11 +106,13 @@
                         @if($policy->status === 'active')
                         class="label label-success"
                         @elseif($policy->status === 'expired')
-                        class="label label-warning"
+                        class="label label-info"
                         @elseif($policy->status === 'cancelled')
                         class="label label-danger"
                         @elseif($policy->status === 'drafted')
                         class="label label-primary"
+                        @elseif($policy->status === 'suspended')
+                        class="label label-warning"
                         @endif
                       >{{$policy->status}}
                     </span>

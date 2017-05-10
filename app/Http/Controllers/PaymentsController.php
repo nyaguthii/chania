@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Pagination\Paginator;
 use App\domain\PaymentSchedule;
 use App\domain\Payment;
 use App\domain\Receipt;
 use App\domain\Customer;
+use App\domain\Credit;
 use App\Http\Requests\PaymentRequest;
 use Carbon\Carbon;
 
@@ -60,7 +62,6 @@ class PaymentsController extends Controller
 
          $payment->amount=$paymentRequest['amount'];
          $payment->transaction_date=$transactionDate;
-         $payment->save();
          $paymentSchedule->amount_paid=$amount_paid;
          //$paymentSchedule->save();
 
@@ -71,12 +72,39 @@ class PaymentsController extends Controller
             $paymentSchedule->status="open";
             //$paymentSchedule->save();
          }
+         if($payment->type==="Agency"){
+            if($paymentRequest['type']==="Agency"){
+                $credit=$payment->credit;
+                $credit->amount=$paymentRequest['amount'];
+                $credit->save();
+                $payment->save();
+            }elseif($paymentRequest['type']==="Owner"){ 
+              if($payment->credit){
+                    $payment->credit->delete();
+                }
+               $receipt= new Receipt();
+               $receipt->amount=$payment->amount;
+               $payment->type="Owner";
+               $payment->receipt()->save($receipt);
+               $payment->save();   
+            }
+            
+         }elseif($payment->type==="Owner"){
+            if($paymentRequest['type']==="Agency"){
+                $receipt=$payment->receipt;
+                $receipt->delete();
+            }elseif($paymentRequest['type']==="Owner"){
+               $receipt=$payment->receipt;
+               $receipt->amount=$payment->amount;
+               $receipt->save(); 
+            }
+
+         }
 
          $paymentSchedule->save();
 
-         $receipt=$payment->receipt;
-         $receipt->amount=$payment->amount;
-         $receipt->save();
+         
+         
          
          session()->flash('message','payment edited successfully');
          return redirect()->route('payments.index',['customer'=>$customer]);
@@ -91,46 +119,68 @@ class PaymentsController extends Controller
     }
 
     public function store(PaymentSchedule $paymentSchedule,PaymentRequest $paymentRequest){
-
-    	//dd($paymentSchedule);
-        
+ 
 
     	if($paymentRequest['amount'] > $paymentSchedule->amount){
 
     		return redirect()->back()->withErrors('Amount is greater Than premium');
     	}
 
-     $transactionDate=Carbon::createFromFormat('m/d/Y',$paymentRequest['transaction_date']);
+         $transactionDate=Carbon::createFromFormat('m/d/Y',$paymentRequest['transaction_date']);
 
-     $payment = new Payment();
-     $payment->amount=$paymentRequest['amount'];
-     $payment->transaction_date=$transactionDate;
-     $amount_paid=$paymentSchedule->amount_paid;
-     $paymentSchedule->amount_paid=$amount_paid+$paymentRequest['amount'];
+         $payment = new Payment();
+         $payment->amount=$paymentRequest['amount'];
+         $payment->transaction_date=$transactionDate;
+         $payment->type=$paymentRequest['type'];
+         $payment->description=$paymentRequest['description'];
+         $amount_paid=$paymentSchedule->amount_paid;
 
-     if($amount_paid+$paymentRequest['amount'] > $paymentSchedule->amount ){
+         $paymentSchedule->amount_paid=$amount_paid+$paymentRequest['amount'];
 
-     	return redirect()->back()->withErrors('Total payment will be greater Than premium');
+         if($amount_paid+$paymentRequest['amount'] > $paymentSchedule->amount ){
 
-     }
+         	return redirect()->back()->withErrors('Total payment will be greater Than premium');
 
- 	 if($paymentSchedule->amount == $paymentSchedule->amount_paid){
- 	 	$paymentSchedule->status="paid";
- 	 	//$paymentSchedule->save();
- 	 }
-     $paymentSchedule->save();
- 	 $paymentSchedule->payments()->save($payment);
- 	 $receipt= new Receipt();
- 	 $receipt->amount=$payment->amount;
- 	 $payment->receipt()->save($receipt);
- 
+         }
 
-     
+     	 if($paymentSchedule->amount == $paymentSchedule->amount_paid){
+     	 	$paymentSchedule->status="paid";
+     	 	//$paymentSchedule->save();
+     	 }
+
+         
+         $paymentSchedule->payments()->save($payment);
+         $paymentSchedule->save();
+         //dd($payment);
+
+         if($paymentRequest['type']==="Agency"){
+            $credit=new Credit();
+            $credit->amount=$paymentRequest['amount'];
+            $credit->description="Agency Payment for ".$paymentSchedule->policy->policy_no." date Due ".$paymentSchedule->due_date;
+            $credit->customer_id=$paymentSchedule->policy->customer->id;
+            $credit->transaction_date=Carbon::createFromFormat('m/d/Y',$paymentRequest['transaction_date']);
+            $credit->type="Auto";
+
+            //before the associating the credit to payment
+            //$customer=$paymentSchedule->policy->customer;
+            //$customer->credits()->save($credit);
+            $payment->credit()->save($credit);
+
+            
+         }elseif($paymentRequest['type']==="Owner"){
+             $receipt= new Receipt();
+             $receipt->amount=$payment->amount;
+             $payment->receipt()->save($receipt);
+
+         }
+
+    
+     //if the payment is being paid by the agency the debt is tranferred to the customer
 
       session()->flash('message','payment created successfully');
       $customer=$paymentSchedule->policy->customer;
       //return view('policies.show',['customer'=>$customer,'policy'=>$paymentSchedule->policy]);
-      return redirect()->route('policies.generate',['customer'=>$customer,'policy'=>$paymentSchedule->policy]);
+      return redirect()->route('customer.policies.generate',['customer'=>$customer,'policy'=>$paymentSchedule->policy]);
     }
 
     public function showDailyForm(){
@@ -139,7 +189,17 @@ class PaymentsController extends Controller
         $today=Carbon::now()->toDateString();
         //$payments=DB::table('payments')->whereDate('created_at',$today)->get();
 
-         $payments=Payment::whereDate('transaction_date',$today)->get();
+
+         $creditPayments=DB::table('credit_payments')
+         ->whereDate('transaction_date',$today)
+         ->select('transaction_date','amount');
+
+         $payments=DB::table('payments')
+         ->whereDate('transaction_date',$today)
+         ->where('type','Owner')
+         ->select('transaction_date','amount')
+         ->union($creditPayments)
+         ->get();
 
         //dd($payments);
         
@@ -154,9 +214,18 @@ class PaymentsController extends Controller
             ]);
 
         $date=Carbon::createFromFormat('m/d/Y',$request['date'])->toDateString();
-        
-        
-        $payments=Payment::whereDate('transaction_date',$date)->get();
+        //$payments=Payment::whereDate('transaction_date',$date)->get();
+        $creditPayments=DB::table('credit_payments')
+         ->whereDate('transaction_date',$date)
+         ->select('transaction_date','amount');
+
+         $payments=DB::table('payments')
+         ->whereDate('transaction_date',$date)
+         ->where('type','Owner')
+         ->select('transaction_date','amount')
+         ->union($creditPayments)
+         ->get();
+
         
         return view('payments.daily',['payments'=>$payments]);
 
@@ -223,6 +292,51 @@ class PaymentsController extends Controller
         
        
         return view('payments.range',['payments'=>$payments]);
+
+    }
+
+    public function totalPerDay(){
+/*
+        $payments = \Illuminate\Pagination\Paginate::make(DB::select( DB::raw("
+            select payments.transaction_date,sum(payments.amount) as total_collection from (
+             select transaction_date,amount from credit_payments
+             union
+             select transaction_date,amount from payments
+             where type='Owner'
+
+            ) as payments
+            group by payments.transaction_date
+            order by payments.transaction_date desc
+            ") ), 20);
+        */
+            $page = isset($_GET['page']) && !empty($_GET['page'])?(int)$_GET['page']:1;
+            $items_per_page = 30;
+            $offset = ($page-1)*$items_per_page;
+            $payments = DB::select( DB::raw("
+                select SQL_CALC_FOUND_ROWS transaction_date, payments.transaction_date,sum(payments.amount) as total_collection from (
+                 select transaction_date,amount from credit_payments
+                 union
+                 select transaction_date,amount from payments
+                 where type='Owner'
+
+                ) as payments
+                group by payments.transaction_date
+                order by payments.transaction_date desc
+
+                LIMIT $offset,$items_per_page
+
+                ") );
+
+            $total_rows = DB::select( DB::raw("
+                SELECT FOUND_ROWS() as rows
+
+                ") );
+
+        //dd($total_rows[0]->rows);
+
+         
+
+         return view('payments.totalperday',['payments'=>$payments,'total_rows'=>$total_rows[0]->rows,'page'=>$page,'items_per_page'=>$items_per_page]);
 
     }
 

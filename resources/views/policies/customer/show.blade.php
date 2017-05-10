@@ -25,7 +25,7 @@
                 <b>Customer</b> <a class="pull-right">{{$policy->customer->firstname}}</a>
               </li>
               <li class="list-group-item">
-                <b>Premium</b> <a class="pull-right">{{$policy->total_premium}}</a>
+                <b>Premium</b> <a class="pull-right">{{number_format($policy->total_premium)}}</a>
               </li>
                <li class="list-group-item">
                 <b>Type</b> <a class="pull-right">{{$policy->type}}</a>
@@ -41,7 +41,7 @@
               </li>
               @if($policy->refund)
               <li class="list-group-item">
-                <b>Refund</b> <a class="pull-right">Kshs {{$policy->refund->amount}}</a>
+                <b>Refund</b> <a class="pull-right">Kshs {{number_format($policy->refund->amount)}}</a>
               </li>
               @endif
               <li class="list-group-item">
@@ -60,11 +60,42 @@
                     </span>
                 </a>
               </li>
-            </ul>
-            @if($policy->status === 'cancelled' && !$policy->refund)
+              @if($policy->status === 'active')
+              <li class="list-group-item">
+                <button type="button" class="btn btn-warning btn-block" data-toggle="modal" data-target="#suspendModal">
+                  Suspend
+                </button>
+              </li>
+              <li class="list-group-item">
+                <button type="button" class="btn btn-danger btn-block" data-toggle="modal" data-target="#cancelModal">
+                  Cancel
+                </button>
+              </li>
+              <li class="list-group-item">
+                <a href="#" class="btn btn-default btn-block"><b>Make a Claim</b></a>
+              </li>
+              @endif
+              @if($policy->status === 'suspended')
+              <li class="list-group-item">
+                <button type="button" class="btn btn-success btn-block" data-toggle="modal" data-target="#sustainModal">
+                  Sustain Policy
+                </button>
+              </li>
+              @endif
+              @if($policy->status === 'cancelled')
+              <li class="list-group-item">
+                <button type="button" class="btn btn-info btn-block" data-toggle="modal" data-target="#activateModal">
+                  Activate Policy
+                </button>
+              </li>
+              @endif
+              @if($policy->status === 'cancelled' && !$policy->refund)
 
                 <a href="{{route('refunds.create',['policy'=>$policy->id])}}" class="btn btn-primary btn-block"><b>Take Refund</b></a>
-            @endif
+              @endif
+              
+            </ul>
+            
           </div>
           <!-- /.box-body -->
         </div>
@@ -94,16 +125,22 @@
                   <th></th>
                   <th>ID</th>
                   <th>Date</th>
-                  <th>Amount Paid</th>              
+                  <th>Type</th>
+                  <th>Amount Paid(Kshs)</th>              
                 </tr>
-              {{$payments = $policy->payments()->paginate(20)}}
+              {{$payments = $policy->payments()->orderBy('id','desc')->paginate(20)}}
               @foreach($payments as $payment)
                 <tr>
                   <td></td>
                   <td>{{$payment->id}}</td>
                   <td>{{$payment->transaction_date}}</td>
-                  <td>{{$payment->amount}}</td>
+                  <td>{{$payment->type}}</td>
+                  <td>{{number_format($payment->amount)}}</td>
+                  @if($payment->receipt)
                   <td><a href="{{route('receipts.show',['receipt'=>$payment->receipt->id])}}" class="btn btn-xs btn-info">Print Receipt</a></td>
+                  @elseif(!$payment->receipt)
+                  <td></td>
+                  @endif
                   @if($policy->status !=='cancelled')
                   <td><a href="{{route('payments.edit',['customer'=>$customer->id,'payment'=>$payment->id])}}" class="btn btn-xs btn-warning">Edit Payment</a></td>
                   @endif
@@ -124,7 +161,143 @@
         
     </section>
     <!-- /.content -->
-  </div>
+    <form action="{{route('customer.policies.cancel',['customer'=>$customer->id,'policy'=>$policy->id])}}" method="POST" >
+                      {{ csrf_field() }} 
+        <div class="modal modal-danger" tabindex="-1" role="dialog" id="cancelModal">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <h4 class="modal-title">Cancel Policy</h4>
+            </div>
+            <div class="modal-body">
+              <div class="row">
+                  <div class="col-xs-8">
+                    <div class="form-group">
+                        <label>Effective Date:</label>
+
+                        <div class="input-group date">
+                          <div class="input-group-addon">
+                            <i class="fa fa-calendar"></i>
+                          </div>
+                          <input name="effective_date" type="text" class="form-control pull-right" id="datepicker" required>
+                        </div>
+                        <!-- /.input group -->
+                      </div>
+                    </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-primary">Save Changes</button>
+            </div>
+          </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+      </div><!-- /.modal -->
+      </form>
+      <form action="{{route('customer.policies.suspend',['customer'=>$customer->id,'policy'=>$policy->id])}}" method="POST" >
+                      {{ csrf_field() }} 
+        <div class="modal modal-warning" tabindex="-1" role="dialog" id="suspendModal">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <h4 class="modal-title">Suspend Policy</h4>
+            </div>
+            <div class="modal-body">
+              <div class="row">
+                  <div class="col-xs-8">
+                    <div class="form-group">
+                        <label>Effective Date:</label>
+
+                        <div class="input-group date">
+                          <div class="input-group-addon">
+                            <i class="fa fa-calendar"></i>
+                          </div>
+                          <input name="effective_date" type="text" class="form-control pull-right" id="suspenddatepicker" required>
+                        </div>
+                        <!-- /.input group -->
+                      </div>
+                    </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-primary">Save Changes</button>
+            </div>
+          </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+      </div><!-- /.modal -->
+      </form>
+      <form action="{{route('customer.policies.activate',['customer'=>$customer->id,'policy'=>$policy->id])}}" method="POST" >
+                      {{ csrf_field() }} 
+        <div class="modal modal-success" tabindex="-1" role="dialog" id="activateModal">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <h4 class="modal-title">Activate Policy</h4>
+            </div>
+            <div class="modal-body">
+              <div class="row">
+                  <div class="col-xs-8">
+                    <div class="form-group">
+                        <label>Effective Date:</label>
+
+                        <div class="input-group date">
+                          <div class="input-group-addon">
+                            <i class="fa fa-calendar"></i>
+                          </div>
+                          <input name="effective_date" type="text" class="form-control pull-right" id="activatedatepicker" required>
+                        </div>
+                        <!-- /.input group -->
+                      </div>
+                    </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-primary">Save Changes</button>
+            </div>
+          </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+      </div><!-- /.modal -->
+      </form>
+      <form action="{{route('customer.policies.sustain',['customer'=>$customer->id,'policy'=>$policy->id])}}" method="POST" >
+                      {{ csrf_field() }} 
+        <div class="modal modal-success" tabindex="-1" role="dialog" id="sustainModal">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <h4 class="modal-title">Sustain Policy</h4>
+            </div>
+            <div class="modal-body">
+              <div class="row">
+                  <div class="col-xs-8">
+                    <div class="form-group">
+                        <label>Effective Date:</label>
+
+                        <div class="input-group date">
+                          <div class="input-group-addon">
+                            <i class="fa fa-calendar"></i>
+                          </div>
+                          <input name="effective_date" type="text" class="form-control pull-right" id="sustaindatepicker" required>
+                        </div>
+                        <!-- /.input group -->
+                      </div>
+                    </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-primary">Save Changes</button>
+            </div>
+          </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+      </div><!-- /.modal -->
+      </form>
+    </div>
   <!-- /.content-wrapper -->
   @endsection
 

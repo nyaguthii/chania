@@ -62,6 +62,10 @@
                   <input name="contact" type="text" class="form-control" id="contact" placeholder="Contact" >
                 </div>
                 <div class="form-group">
+                  <label for="contact">Pin </label>
+                  <input name="pin" type="text" class="form-control"  placeholder="Pin" >
+                </div>
+                <div class="form-group">
                 <label>
                   <input type="checkbox" class="flat-red" name="is_member" value="1" checked>
                   is Member?
