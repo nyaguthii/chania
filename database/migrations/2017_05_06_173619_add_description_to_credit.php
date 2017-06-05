@@ -14,7 +14,7 @@ class AddDescriptionToCredit extends Migration
     public function up()
     {
         Schema::table('credits', function (Blueprint $table) {
-            $table->string('description')->nullable();
+            $table->string('description',100)->nullable();
         });
     }
 

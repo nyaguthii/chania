@@ -24,9 +24,7 @@ class PaymentRequest extends FormRequest
     public function rules()
     {
         return [
-            'amount' => 'required|numeric',
-            'transaction_date'=>'required',
-            'type'=>'required'
+            'transaction_date'=>'required'
             ];
     }
 }

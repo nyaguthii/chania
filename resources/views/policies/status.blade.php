@@ -70,7 +70,6 @@
               <tr>
                   
                   <th></th>
-                  <th>ID</th>
                   <th>Policy Number</th>
                   <th>Customer</th>
                   <th>Effective Date</th>
@@ -78,13 +77,13 @@
                   <th>Total Premium</th>
                   <th>Vehicle</th>
                   <th>Status</th>
+                  <th>Actions</th>
                 </tr>
                 @foreach($policies as $policy)
                 <tr>
                   <td><a href="{{route('customer.policies.show',['customer'=>$policy->customer->id,'policy'=>$policy->id])}}" class="btn btn-xs btn-primary">show</a></td>
-                  <td>{{$policy->id}}</td>
                   <td>{{$policy->policy_no}}</td>
-                  <td>{{$policy->customer->firstname}} {{$policy->customer->lastname}} </td>
+                  <td>{{$policy->customer->firstname}} </td>
                   <td>{{$policy->effective_date->toDateString()}}</td>
                   <td>{{$policy->expiry_date->toDateString()}}</td>
                   

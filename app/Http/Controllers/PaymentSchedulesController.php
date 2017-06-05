@@ -32,19 +32,7 @@ class PaymentSchedulesController extends Controller
         if($policy->total_premium<=0){
          return redirect()->back()->withErrors('Add Endorsement First');
         }
-        if($request['is_pay_daily']=="yes"){
-           
-
-            PaymentSchedule::create([
-            'policy_id'=>$policy->id,
-            'due_date'=>$policy->expiry_date,
-            'amount'=>$policy->total_premium,
-            'amount_paid'=>0,
-            'status'=>'open',
-            'lifeline_status'=>'active'
-            ]);
-
-        }else{
+       
             $premium=$policy->total_premium/$request['remaining-payments'];
 
             $dueDate=$policy->effective_date;
@@ -55,7 +43,6 @@ class PaymentSchedulesController extends Controller
                 'policy_id'=>$policy->id,
                 'due_date'=>$dueDate,
                 'amount'=>$premium,
-                'amount_paid'=>0,
                 'status'=>'open',
                 'lifeline_status'=>'active'
                 ]);
@@ -63,9 +50,6 @@ class PaymentSchedulesController extends Controller
 
             }
     
-
-        }
-            
         $customer = $policy->customer;
         //session()->flash('payment-schedules-create-message','Schedules created successfully');
         //return view('policies.index',compact('customer'));

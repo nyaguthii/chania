@@ -29,7 +29,7 @@
                   <!-- /.form-group -->
                     <div class="form-group">
                         <label for="policy_no">Policy Number</label>
-                        <input class="form-control" name="policy_no" placeholder="Policy Number" >
+                        <input class="form-control" name="policy_no" placeholder="Policy Number" value="{{old('policy_no')}}">
                       </div>
                       <!-- Date -->
                       <div class="form-group">
@@ -39,7 +39,7 @@
                           <div class="input-group-addon">
                             <i class="fa fa-calendar"></i>
                           </div>
-                          <input name="effective_date" type="text" class="form-control pull-right" id="datepicker" >
+                          <input name="effective_date" type="text" class="form-control pull-right" id="datepicker" value="{{old('effective_date')}}">
                         </div>
                         <!-- /.input group -->
                       </div>
@@ -60,17 +60,21 @@
                         <option>Third Party</option>
                       </select>
                     </div>
+
                     
                   <!-- /.form-group -->
                 </div>
                 <!-- /.col -->
                 <div class="col-md-6">              
                   <!-- /.form-group -->
-                
                   <div class="form-group">
-                    <label for="carrier">Carrier</label>
-                    <input  class="form-control" name="carrier" placeholder="Carrier" >
-                  </div>
+                      <label>Carrier</label>
+                      <select  class="form-control" name="carrier"  >
+                      @foreach($carriers as $carrier)
+                        <option>{{$carrier->name}}</option>
+                      @endforeach
+                      </select>
+                    </div>
                   <div class="form-group">
                     <label>Expiry Date:</label>
 
@@ -84,7 +88,7 @@
                   </div>
                   <div class="form-group">
                     <label for="agent">Agent</label>
-                    <input class="form-control" name="agent" placeholder="Agent" >
+                    <input class="form-control" name="agent" placeholder="Agent" value="{{old('agent')}}">
                   </div>
                   <div class="form-group">
                       <label>Vehicle</label>

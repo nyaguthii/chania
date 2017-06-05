@@ -37,6 +37,10 @@
                   <input name="firstname"  class="form-control" id="firstname" value="{{$customer->firstname}}" >
                 </div>
                 <div class="form-group">
+                  <label for="member_id">Member No</label>
+                  <input name="member_id"  class="form-control"  value="{{$customer->member_id}}" >
+                </div>
+                <div class="form-group">
                   <label for="lastname">Last Name</label>
                   <input name="lastname" type="text" class="form-control" value="{{$customer->lastname}}" >
                 </div>
@@ -63,7 +67,7 @@
                 </div>
                 <div class="form-group">
                   <label for="contact">Pin</label>
-                  <input name="contact" type="text" class="form-control" value="{{$customer->pin}}">
+                  <input name="pin" type="text" class="form-control" value="{{$customer->pin}}">
                 </div>
                 <div class="form-group">
                 <label>

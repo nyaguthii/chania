@@ -41,7 +41,7 @@
         </div>
         <!-- /.col -->
         <div class="col-sm-4 invoice-col">
-          <b>Receipt #Cr{{$receipt->id}}</b><br>
+          <b>Receipt:{{$receipt->receipt_no}}</b><br>
           <br>
         </div>
         <!-- /.col -->

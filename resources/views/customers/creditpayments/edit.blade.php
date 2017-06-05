@@ -36,7 +36,7 @@
                           <div class="input-group-addon">
                             <i class="fa fa-calendar"></i>
                           </div>
-                          <input name="transaction_date" type="text" class="form-control pull-right" id="datepicker" >
+                          <input name="transaction_date" type="text" class="form-control pull-right" id="datepicker" value="{{Carbon\Carbon::parse($creditPayment->transaction_date)->format('m/d/Y')}}">
                         </div>
                         <!-- /.input group -->
                       </div>

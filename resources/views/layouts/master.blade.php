@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="csrf-token" content="{{ csrf_token() }}" />
-  <title>AdminLTE 2 | Simple Tables</title>
+  <title>Chania Sacco</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <!-- Bootstrap 3.3.6 -->
@@ -51,7 +51,6 @@
 <!-- ./wrapper -->
 
 <!-- jQuery 2.2.3 -->
-{{ asset('js/dataTables.bootstrap.min.js') }}
 <script src="{{ asset('js/jquery-2.2.3.min.js') }}"></script>
 <!-- Bootstrap 3.3.6 -->
 <script src="{{ asset('js/bootstrap.min.js') }}"></script>
@@ -66,10 +65,9 @@
 <script src="{{ asset('js/fastclick.js') }}"></script>
 <script src="{{ asset('js/sing.js') }}"></script>
 <script src="{{ asset('js/jquery.dataTables.min.js') }}"></script>
-<script src="{{ asset('js/dataTables.bootstrap.min.js') }}></script>
+<script src="{{ asset('js/dataTables.bootstrap.min.js')}}"></script>
+<script src="{{ asset('js/bootstrap-datepicker.js')}}"></script>
 <script>
-    
-
   $(function () {
     
     $("#example1").DataTable();

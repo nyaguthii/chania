@@ -3,7 +3,15 @@
 <div class="content-wrapper">
     <!-- Content Header (Page header) -->
     <section class="content-header">
-  
+      <h1>
+        {{$customer->firstname." ".$customer->lastname}}
+        <small>vehicles</small>
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="{{route('customers.show',['customer'=>$customer->id])}}"><i class="fa fa-dashboard"></i>Customer</a></li>
+        <li><a href="{{route('vehicles.index',['customer'=>$customer->id])}}">Vehicles</a></li>
+        <li class="active">Create</li>
+      </ol>
     </section>
 
     <!-- Main content -->

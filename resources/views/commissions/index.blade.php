@@ -37,7 +37,7 @@
                   <td>{{$commission->id}}</td>
                   <td>{{$commission->policy->policy_no}}</td>
                   <td>{{$commission->policy->vehicle->registration}}</td>
-                  <td>{{$commission->created_at->toDateString()}}</td>
+                  <td>{{$commission->created_at->format('d-m-Y')}}</td>
                   <td>{{number_format($commission->amount)}}</td>
                   <td>{{number_format($commission->amount*0.1-$commission->amount*0.01)}}</td>
                 </tr>

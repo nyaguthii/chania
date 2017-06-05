@@ -39,5 +39,13 @@ class PoliciesController extends Controller
         return view('policies.status',['policies'=>$policies]);
 
     }
+
+    public function expired(){
+
+        $today=Carbon::now()->toDateString();
+        $policies=Policy::where('expiry_date','<=',$today)->orderBy('id','desc')->paginate(50);
+        return view('policies.status',['policies'=>$policies]);
+
+    }
     
 }

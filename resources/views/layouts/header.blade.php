@@ -1,6 +1,6 @@
   <header class="main-header">
     <!-- Logo -->
-    <a href="../../index2.html" class="logo">
+    <a href="#" class="logo">
       <!-- mini logo for sidebar mini 50x50 pixels -->
       <span class="logo-mini"><b>A</b>LT</span>
       <!-- logo for regular state and mobile devices -->
@@ -27,8 +27,10 @@
             <ul class="dropdown-menu">
               <!-- Menu Footer-->
               <li class="user-footer">
+                <div class="pull-left">
+                  <a href="{{route('users.edit',['user'=>auth()->user()->id])}}" class="btn btn-default btn-flat">Change Password</a>
+                </div>
                 <div class="pull-right">
-
                 <form id="logout-form" action="{{ route('logout') }}" method="POST" >
                   {{ csrf_field() }}
                   <button type="submit" class="btn btn-danger btn-flat">Sign out</button>

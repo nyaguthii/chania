@@ -14,7 +14,7 @@ class Addpincoltocustomers extends Migration
     public function up()
     {
        Schema::table('customers', function (Blueprint $table) {
-            $table->string('pin')->nullable();
+            $table->string('pin',50)->nullable();
         });
     }
 

@@ -26,9 +26,7 @@ class EndorsementRequest extends FormRequest
         return [
             'type' => 'required',
             'amount' => 'required|numeric',
-            'description' => 'required',
-            'commission-percent' => 'required|numeric'
-
+            'description' => 'required'
         ];
     }
 }

@@ -4,7 +4,13 @@
   <div class="content-wrapper">
     <!-- Content Header (Page header) -->
     <section class="content-header">
-      
+      <h1>
+        {{$customer->firstname}} {{$customer->lastname}}
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="{{route('customers.index',['is_member'=>$customer->is_member])}}"><i class="fa fa-dashboard"></i>Customers</a></li>
+        <li class="active">Customer</li>
+      </ol>
     </section>
 
     <!-- Main content -->
@@ -41,9 +47,10 @@
                 @endif
                 </a>
               </li>
+              <li class="list-group-item">
+                <a class="btn btn-block btn-primary btn-flat" href="{{route('customers.statementdate',['customer'=>$customer->id])}}">Statement</a>
+              </li>
             </ul>
-
-            <a href="#" class="btn btn-primary btn-block"><b>Follow</b></a>
           </div>
           <!-- /.box-body -->
         </div>
@@ -118,7 +125,6 @@
                 <th>Policy</th>
                 <th>Vehicle</th>
                 <th>Amount</th>
-                <th>Amount Paid</th>
                                
               </tr>
               @foreach($paymentSchedules as $paymentSchedule)
@@ -128,7 +134,6 @@
               <td>{{$paymentSchedule->policy_no}}</td>
               <td>{{$paymentSchedule->registration}}</td>
               <td>{{$paymentSchedule->pamount}}</td>
-              <td>{{$paymentSchedule->amount_paid}}</td>
               </tr>
               @endforeach
               

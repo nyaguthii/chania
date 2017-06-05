@@ -64,15 +64,14 @@
             <div class="box-header">
               <p>Policies</p>
               <div class="box-tools pull-right">
-              <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
-               <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-remove"></i></button>
-            </div>
+                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-remove"></i></button>
+              </div>
             </div>
             <!-- /.box-header -->
             <div class="box-body table-responsive no-padding">
               <table class="table table-hover">
               <tr>
-                  <th></th>
                   <th></th>
                   <th></th>
                   <th></th>
@@ -90,10 +89,6 @@
                   <td><a href="{{route('customer.policies.generate',['customer'=>$policy->customer->id,'policy'=>$policy->id])}}" class="btn btn-xs btn-info">details</a></td>
                   <td><a href="{{route('customer.policies.show',['customer'=>$policy->customer->id,'policy'=>$policy->id])}}" class="btn btn-xs btn-primary">show</a></td>
                   <td><a href="{{route('customer.policies.edit',['customer'=>$policy->customer->id,'policy'=>$policy->id])}}" class="btn btn-xs btn-warning">edit</a></td>
-                  <form action="{{route('customer.policies.cancel',['customer'=>$policy->customer->id,'policy'=>$policy->id])}}" method="POST" >
-                  {{ csrf_field() }} 
-                  <td><button  type="submit" class="btn btn-xs btn-danger" onclick="if (!confirm('Are you sure you want to Cancel Policy?')) return false;">Cancel</button></td>
-                  </form>
                   <td>{{$policy->id}}</td>
                   <td>{{$policy->policy_no}}</td>
                   <td>{{$policy->effective_date->toDateString()}}</td>

@@ -3,7 +3,9 @@
 <div class="content-wrapper">
     <!-- Content Header (Page header) -->
     <section class="content-header">
-      
+      <h1>
+        Customers
+      </h1>
     </section>
 
     <!-- Main content -->
@@ -26,8 +28,8 @@
               <div class="row">
                 <div class="col-md-5">
                       <div class="form-group">
-                      <label >Insured ID</label>
-                      <input class="form-control" name="insured_id">
+                      <label >Member NO</label>
+                      <input class="form-control" name="member_no">
                   <!-- /.form-group -->
                     </div>
                 </div>
@@ -54,7 +56,7 @@
         <div class="col-xs-12">
           <div class="box">
             <div class="box-header">
-              <a href="/customers/create" class="btn btn-sm btn-primary"><span class="glyphicon glyphicon-plus"></span> Add Customer </a>
+              <a href="{{route('customers.create')}}" class="btn btn-sm btn-primary"><span class="glyphicon glyphicon-plus"></span> Add Customer </a>
 
 
               <div class="box-tools pull-right">
@@ -68,9 +70,9 @@
               <tr>
                   
                   <th>ID</th>
-                  <th>First Name</th>
-                  <th>Last Name</th>
-                  <th>Insured ID</th>
+                  <th>Member No</th>
+                  <th>First Name</th>                  
+                  <th>Middle Name</th>
                   <th>Pin</th>
                   <th>Is Member</th>
                   <th></th>
@@ -78,9 +80,9 @@
               @foreach($customers as $customer)
                 <tr>
                   <td>{{$customer->id}}</td>
+                  <td>{{$customer->member_id}}</td>
                   <td>{{$customer->firstname}}</td>
-                  <td>{{$customer->lastname}}</td>
-                  <td>{{$customer->insured_id}}</td>
+                  <td>{{$customer->middlename}}</td>
                   <td>{{$customer->pin}}</td>
                   <td>
                    <span 

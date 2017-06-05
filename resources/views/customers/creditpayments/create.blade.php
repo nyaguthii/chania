@@ -63,6 +63,20 @@
                       <input class="form-control" name="amount" id="amount" placeholder="Amount">
                   <!-- /.form-group -->
                     </div>
+                    <div class="form-group">
+                      <label>From</label>
+                      <select  class="form-control" name="place"  >
+                        <option>Office</option>
+                        <option>Field</option>
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <label> Description </label>
+                      <input class="form-control" name="description"  placeholder="Description">
+                  <!-- /.form-group -->
+                    </div>
+                  <!-- /.form-group -->
+                    </div>
                   <div class="col-md-12">
                     <div class="row">
                     @include('layouts.error') 

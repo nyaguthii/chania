@@ -36,7 +36,7 @@
                           <div class="input-group-addon">
                             <i class="fa fa-calendar"></i>
                           </div>
-                          <input name="transaction_date" type="text" class="form-control pull-right" id="datepicker" >
+                          <input name="transaction_date" type="text" class="form-control pull-right" id="datepicker" value="{{Carbon\Carbon::parse($payment->transaction_date)->format('m/d/Y')}}">
                         </div>
                         <!-- /.input group -->
                       </div>
@@ -57,7 +57,7 @@
                       <label for="policy-id">Amount(Kshs)</label>
                       <input class="form-control" name="amount" id="amount" value="{{$payment->amount}}" required>
                   <!-- /.form-group -->
-                </div>
+                     </div>
                 <div class="form-group">
                       <label>Type</label>
                       <select  class="form-control" name="type"  >
@@ -69,6 +69,13 @@
                       <label >Description</label>
                       <input class="form-control" name="description" value="{{$payment->description}}">
                   <!-- /.form-group -->
+                    </div>
+                     <div class="form-group">
+                      <label>From</label>
+                      <select  class="form-control" name="place"  >
+                        <option>Office</option>
+                        <option>Field</option>
+                      </select>
                     </div>
                 <div class="col-md-12">
                   <div class="row">

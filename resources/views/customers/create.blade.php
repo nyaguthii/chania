@@ -17,7 +17,7 @@
           </div>
         </div>
         <!-- /.box-header -->
-        <form action="/customers" method="POST" role="form">
+        <form action="{{route('customers.store')}}" method="POST" role="form">
              {{ csrf_field() }}
         <div class="box-body">
           <div class="row">
@@ -33,45 +33,40 @@
                   </select>
                 </div>
                 <div class="form-group">
-                  <label for="firstname">First Name</label>
-                  <input name=firstname  class="form-control" id="firstname" placeholder="First Name">
+                  <label >Member No</label>
+                  <input name="member_id"  class="form-control"  placeholder="Member ID" value="{{old('member_no')}}">
                 </div>
                 <div class="form-group">
-                  <label for="lastname">Last Name</label>
-                  <input name=lastname type="text" class="form-control" id="lastname" placeholder="Last Name" >
+                  <label for="firstname">First Name</label>
+                  <input name="firstname"  class="form-control" id="firstname" placeholder="First Name"
+                  value="{{old('firstname')}}">
                 </div>
                 <div class="form-group">
                   <label for="middlename">Middle Name</label>
-                  <input name=middlename type="text" class="form-control" id="middlename" placeholder="Middle Name" >
+                  <input name="middlename" type="text" class="form-control" id="middlename" placeholder="Middle Name" value="{{old('middlename')}}" >
                 </div>
+                <div class="form-group">
+                  <label for="lastname">Last Name</label>
+                  <input name="lastname" type="text" class="form-control" id="lastname" placeholder="Last Name" value="{{old('lastname')}}">
+                </div>   
               <!-- /.form-group -->
             </div>
             <!-- /.col -->
             <div class="col-md-6">              
               <!-- /.form-group -->
                 <div class="form-group">
-                  <label for="insured_id">Insured ID</label>
-                  <input name=insured_id type="text" class="form-control" id="insured_id" placeholder="Insured ID" >
-                </div>
-                <div class="form-group">
                   <label for="insured_id">Address</label>
-                  <input name=address type="text" class="form-control" id="address" placeholder="Address" >
+                  <input name="address" type="text" class="form-control" id="address" placeholder="Address" 
+                  value="{{old('address')}}">
                 </div>
                 <div class="form-group">
                   <label for="contact">Contact</label>
-                  <input name="contact" type="text" class="form-control" id="contact" placeholder="Contact" >
+                  <input name="contact" type="text" class="form-control" id="contact" placeholder="Contact" value="{{old('contact')}}">
                 </div>
                 <div class="form-group">
-                  <label for="contact">Pin </label>
-                  <input name="pin" type="text" class="form-control"  placeholder="Pin" >
+                  <label >Pin </label>
+                  <input name="pin" type="text" class="form-control"  placeholder="Pin" value="{{old('pin')}}">
                 </div>
-                <div class="form-group">
-                <label>
-                  <input type="checkbox" class="flat-red" name="is_member" value="1" checked>
-                  is Member?
-                </label>
-              </div> 
-
               <!-- /.form-group -->
             </div>
 

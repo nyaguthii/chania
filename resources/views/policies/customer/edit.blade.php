@@ -4,8 +4,16 @@
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-        {{$customer->firstname}}  {{$customer->lastname}}
+        {{$customer->firstname." ".$customer->lastname}}
+        <small>{{$policy->policy_no}}</small>
       </h1>
+      <ol class="breadcrumb">
+        <li><a href="{{route('customers.index',['is_member'=>$customer->is_member])}}"><i class="fa fa-dashboard"></i>Customers</a></li>
+        <li><a href="{{route('customers.show',['customer'=>$customer->id])}}"><i ></i>Customer</a></li>
+         <li ><a href="{{route('customer.policies.index',['customer'=>$customer->id])}}"><i></i>Policies</a></li>
+         <li ><a href="{{route('customer.policies.show',['customer'=>$customer->id,'policy'=>$policy->id])}}"><i></i>Policy</a></li>
+        <li class="active">Edit</li>
+      </ol>
     </section>
 
 
@@ -21,7 +29,7 @@
               
             </div>
             <!-- /.box-header -->
-            <form action="#" method="PUT">
+            <form action="{{route('customer.policies.update',['policy'=>$policy->id])}}" method="POST">
             <div class="box-body">
               <div class="row">
                 <div class="col-md-6">
@@ -39,7 +47,7 @@
                           <div class="input-group-addon">
                             <i class="fa fa-calendar"></i>
                           </div>
-                          <input name="effective_date" type="text" class="form-control pull-right" id="datepicker" >
+                          <input name="effective_date" type="text" class="form-control pull-right" id="datepicker" value="{{Carbon\Carbon::parse($policy->effective_date)->format('m/d/Y')}}">
                         </div>
                         <!-- /.input group -->
                       </div>
@@ -47,6 +55,7 @@
                       <label>Period</label>
                       <select  class="form-control" name="duration_type" id="duration" >
                         <option>Annual</option>
+                        <option>Ten Months</option>
                         <option>Semi Annual</option>
                         <option>Quartely</option>
                         <option>Monthly</option>

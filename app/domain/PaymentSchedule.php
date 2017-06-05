@@ -13,9 +13,9 @@ class PaymentSchedule extends Model
     	return $this->belongsTo(Policy::class);
     }
 
-    public function payments(){
+    public function vehicleCredit(){
 
-    	return $this->hasMany(Payment::class);
+    	return $this->hasOne(VehicleCredit::class);
     }
     
 }

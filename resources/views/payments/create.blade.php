@@ -44,15 +44,6 @@
                       <label for="policy-id">Premium Amount(Kshs)</label>
                       <input class="form-control" disabled="disabled" value="{{$paymentSchedule->amount}}">
                     </div>
-                    <div class="form-group">
-                      <label for="policy-id">Paid Amount(Kshs)</label>
-                      <input class="form-control" disabled="disabled" value="{{$paymentSchedule->amount_paid}}">
-                    </div>
-                    <div class="form-group">
-                      <label for="policy-id">Balance Amount(Kshs)</label>
-                      <input class="form-control" disabled="disabled" value="{{$paymentSchedule->amount-$paymentSchedule->amount_paid}}">
-                    </div>
-
                   <!-- /.form-group -->
                 </div>
                 <!-- /.col -->
@@ -60,19 +51,7 @@
                   <!-- /.form-group -->
                     <div class="form-group">
                       <label for="policy-id">Amount(Kshs)</label>
-                      <input class="form-control" name="amount" id="amount" placeholder="Amount">
-                  <!-- /.form-group -->
-                    </div>
-                    <div class="form-group">
-                      <label>Type</label>
-                      <select  class="form-control" name="type"  >
-                        <option>Agency</option>
-                        <option>Owner</option>
-                      </select>
-                    </div>
-                    <div class="form-group">
-                      <label >Description</label>
-                      <input class="form-control" name="description"  placeholder="Description">
+                      <input class="form-control" name="amount" id="amount" value="{{$paymentSchedule->amount}}" disabled>
                   <!-- /.form-group -->
                     </div>
                   <div class="col-md-12">

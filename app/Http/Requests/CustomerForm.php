@@ -28,10 +28,10 @@ class CustomerForm extends FormRequest
             'firstname' => 'required',
             'lastname' => 'required',
             'middlename' => 'required',
-            'insured_id' => 'required|unique:customers',
             'firstname' => 'required',
             'address' => 'required',
             'contact' => 'required',
+            'member_id'=>'required|unique:customers',
             'pin' => 'required'
         ];
     }

@@ -10,6 +10,11 @@ use App\domain\CreditReceipt;
 
 class CreditPaymentsController extends Controller
 {
+    
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
     public function create(Customer $customer){
 
     	return view('customers.creditpayments.create',['customer'=>$customer]);
@@ -20,17 +25,22 @@ class CreditPaymentsController extends Controller
 
     	$this->validate($request,[
     		'amount'=>'required|numeric',
-    		'transaction_date'=>'required'
+    		'transaction_date'=>'required',
+            'place'=>'required',
+            'description'=>'required'
     		]);
     	$creditPayment = new CreditPayment();
     	$creditPayment->amount=$request['amount'];
     	$creditPayment->transaction_date=Carbon::createFromFormat('m/d/Y',$request['transaction_date']);
+        $creditPayment->place=$request['place'];
+        $creditPayment->description=$request['description'];
         
 
 
     	$customer->creditPayments()->save($creditPayment);
         $creditReceipt=new CreditReceipt();
         $creditReceipt->amount=$creditPayment->amount;
+        //$creditReceipt->receipt_no=$request['receipt_no'];
 
         $creditPayment->creditReceipt()->save($creditReceipt);
 
@@ -45,11 +55,13 @@ class CreditPaymentsController extends Controller
 
     	$this->validate($request,[
     		'transaction_date'=>'required',
-    		'amount'=>'required|numeric'
+    		'amount'=>'required|numeric',
+            'place'=>'required'
     		]);
 
     	$creditPayment->transaction_date=Carbon::createFromFormat('m/d/Y',$request['transaction_date']);
     	$creditPayment->amount=$request['amount'];
+        $creditPayment->from=$request['place'];
         $creditReceipt=$creditPayment->creditReceipt;
         $creditReceipt->amount=$creditPayment->amount;
 

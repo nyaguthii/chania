@@ -41,25 +41,13 @@
                       <label for="policy-id">Amount(Kshs)</label>
                       <input class="form-control" name="amount" id="endorsement-amount" value="{{$endorsement->amount}}" required>
                     </div>
-                    <div class="form-group">
-                      <label for="policy-id">Description</label>
-                      <input class="form-control" name="description" value="{{$endorsement->description}}" required>
-                    </div>
-                    
-                  <!-- /.form-group -->
                 </div>
                 <!-- /.col -->
-                <div class="col-md-6">              
-                  <!-- /.form-group -->
-                    <div class="form-group">
-                        <label for="commission-percent">Commission Percentage</label>
-                        <input class="form-control" name="commission-percent" id="commission-percent" placeholder="%">
-                      </div>
-                      <div class="form-group">
-                        <label for="commission-amount">Commission Amount(Kshs)</label>
-                        <input class="form-control" id="commission-amount" name="commission-amount" >
-                      </div>
-                  <!-- /.form-group -->
+                <div class="col-md-6"> 
+                  <div class="form-group">
+                      <label for="policy-id">Description</label>
+                      <input class="form-control" name="description" value="{{$endorsement->description}}" required>
+                    </div>               
                 </div>
 
                 <!-- /.col -->

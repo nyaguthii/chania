@@ -3,7 +3,15 @@
 <div class="content-wrapper">
     <!-- Content Header (Page header) -->
     <section class="content-header">
-      
+      <h1>
+        {{$customer->firstname." ".$customer->lastname}}
+        <small>Payments</small>
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="{{route('customers.index',['is_member'=>$customer->is_member])}}"><i class="fa fa-dashboard"></i>Customers</a></li>
+        <li><a href="{{route('customers.show',['customer'=>$customer->id])}}"><i ></i>Customer</a></li>
+        <li class="active">Payments</li>
+      </ol>
     </section>
 
     <!-- Main content -->
@@ -28,24 +36,17 @@
               <table class="table table-hover">
               <tr>
                   <th>Id</th>
-                  <th>Payment Schedule</th>
                   <th>Date</th>
                   <th>Amount</th>
                   
                 </tr>
-              {{$payments = $policy->payments()->orderBy('id','desc')->paginate(10)}}
-              @foreach($payments as $payment)
+              
+              @foreach($policy->paymentSchedules()->where('status','paid')->get() as $paymentSchedule)
                 <tr>
-                  <td>{{$payment->id}}</td>
-                  <td>{{$payment->paymentSchedule->id}}</td>
-                  <td>{{$payment->transaction_date}}</td>
-                  <td>{{$payment->amount}}</td>
-                  @if($payment->receipt)
-                  <td><a href="{{route('receipts.show',['receipt'=>$payment->receipt->id])}}" class="btn btn-xs btn-info">Print Receipt</a></td>
-                  @elseif(!$payment->receipt)
-                  <td></td>
-                  @endif
-                  <td><a href="{{route('payments.edit',['customer'=>$customer->id,'payment'=>$payment->id])}}" class="btn btn-xs btn-warning">Edit Payment</a></td>
+                  <td>{{$paymentSchedule->id}}</td>
+                  <td>{{$paymentSchedule->due_date}}</td>
+                  <td>{{$paymentSchedule->amount}}</td>
+            
                 </tr>
               @endforeach
               </table>
@@ -54,10 +55,9 @@
               
             <!-- /.box-body -->
             <div class="box-footer">
-              {{$payments->links()}}
             </div>
             <div class="box-footer">
-              <button type="button" class="btn btn-primary pull-right"> Total(Kshs) {{$payments->sum('amount')}}</button>
+              <button type="button" class="btn btn-primary pull-right"> Total(Kshs) {{$policy->paymentSchedules()->where('status','paid')->sum('amount')}}</button>
             </div>
       </div>
       @endforeach       

@@ -104,28 +104,22 @@
             <tr>
                 <th>Id</th>
                 <th>Transaction Date</th>
-                <th>Policy</th>
-                <th>Customer</th>
-                <th>Vehicle</th>
                 <th>Amount</th>
                                
               </tr>
 
               @foreach($payments as $payment)
                 <tr>
-                <td>{{$payment->pid}}</td>
+                <td></td>
                 <td>{{$payment->transaction_date}}</td>
-                <td>{{$payment->policy_no}}</td>
-                <td>{{$payment->firstname}} {{$payment->lastname}}</td>
-                <td>{{$payment->registration}}</td>
-                <td>{{$payment->pamount}}</td>
+                <td>{{$payment->amount}}</td>
                                
               </tr>
               @endforeach
             </table>
           </div>
           <div class="box-footer">
-           {{$payments->links()}}
+           
           </div>
           <div class="box-footer">
            <button type="button" class="btn btn-primary pull-right">Total (kshs){{$payments->sum('amount')}}</button> 

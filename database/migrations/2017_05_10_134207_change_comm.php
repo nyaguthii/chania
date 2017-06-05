@@ -13,9 +13,9 @@ class ChangeComm extends Migration
      */
     public function up()
     {
-        Schema::table('commissions', function (Blueprint $table) {
+        /*Schema::table('commissions', function (Blueprint $table) {
             $table->renameColumn('endorsement_id', 'payment_schedule_id');
-        });
+        });*/
     }
 
     /**

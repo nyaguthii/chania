@@ -5,7 +5,13 @@
     <section class="content-header">
       <h1>
         {{$customer->firstname." ".$customer->lastname}}
+        <small>Credit</small>
       </h1>
+      <ol class="breadcrumb">
+        <li><a href="{{route('customers.index',['is_member'=>$customer->is_member])}}"><i class="fa fa-dashboard"></i>Customers</a></li>
+        <li><a href="{{route('customers.show',['customer'=>$customer->id])}}"><i ></i>Customer</a></li>
+        <li class="active">Credit</li>
+      </ol>
     </section>
 
     <!-- Main content -->
@@ -33,8 +39,13 @@
                   <span class="pull-right text-red">Kshs {{number_format($credits->sum('amount'))}}</span></a></li>
                 <li><a href="#">Total Amount Paid <span class="pull-right text-green">Kshs {{number_format($customer->creditPayments->sum('amount'))}}</span></a>
                 </li>
+                <li><a href="#">Total Daily Collection <span class="pull-right text-purple">Kshs {{number_format($totalDaily)}}</span></a>
+                </li>
                 <li><a href="#">Balance
-                  <span class="pull-right text-yellow">Kshs {{number_format($credits->sum('amount')-$customer->creditPayments->sum('amount') )}}</span></a></li>
+                  <span class="pull-right text-yellow">Kshs {{number_format($credits->sum('amount')-($customer->creditPayments->sum('amount')+$totalDaily) )}}</span></a></li>
+                 <li>
+                   <a href="{{route('customers.statement',['customer'=>$customer->id])}}" class="btn btn-primary btn-block"><b>Statement</b></a>
+                 </li>
               </ul>
             </div>
             <!-- /.footer -->
@@ -54,7 +65,7 @@
             <!-- /.box-header -->
             <div class="box-body">
               <div class="table-responsive">
-                <table class="table no-margin">
+                <table class="table table-condensed">
                   <thead>
                   <tr>
                     <th>ID</th>
@@ -68,7 +79,7 @@
                   @foreach($creditPayments as $creditPayment)
                   <tr>
                     <td>{{$creditPayment->id}}</td>
-                    <td>{{$creditPayment->transaction_date}}</td>
+                    <td>{{Carbon\Carbon::parse($creditPayment->transaction_date)->format('d-m-Y')}}</td>
                     <td>{{number_format($creditPayment->amount)}}</td>
                     <td><a href="{{route('creditpayments.edit',['creditPayment'=>$creditPayment->id])}}" class="btn btn-xs btn-info">Edit</a></td>
                     @if($creditPayment->creditReceipt)
@@ -82,6 +93,9 @@
               <!-- /.table-responsive -->
             </div>
             <!-- /.box-body -->
+            <div class="box-footer">
+              {{$creditPayments->links()}}
+            </div>
             <div class="box-footer clearfix">
               <a href="javascript:void(0)" class="btn btn-sm btn-info btn-flat pull-left"></a>
               <a href="javascript:void(0)" class="btn btn-sm btn-default btn-flat pull-right"></a>
@@ -94,7 +108,7 @@
         <div class="col-xs-12">
           <div class="box">
             <div class="box-header">           
-            <a class="btn btn-primary btn-sm glyphicon glyphicon-plus" href="{{route('credits.create', ['customer' => $customer->id])}}">add a Due Amount</a>    
+            <a class="btn btn-primary btn-flat glyphicon glyphicon-plus" href="{{route('credits.create', ['customer' => $customer->id])}}">add a Due Amount</a>    
               <div class="box-tools pull-right">
                 <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
                 <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-remove"></i></button>
@@ -112,7 +126,7 @@
               @foreach($credits as $credit)
                 <tr>
                   <td>{{$credit->id}}</td>
-                  <td>{{$credit->transaction_date}}</td>
+                  <td>{{Carbon\Carbon::parse($credit->transaction_date)->format('d-m-Y')}}</td>
                   <td>{{number_format($credit->amount)}}</td>
                   <td>{{$credit->description}}</td>
                   @if($credit->type==="Manual")
@@ -123,7 +137,7 @@
               </table>
             </div>
             <div class="box-footer">
-              {{$credits->links()}}
+              
             </div>
             <!-- /.box-body -->
           </div>

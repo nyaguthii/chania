@@ -3,9 +3,17 @@
 <div class="content-wrapper">
     <!-- Content Header (Page header) -->
     <section class="content-header">
-        <h1>
-        {{$policy->policy_no}}
+      <h1>
+        {{$customer->firstname." ".$customer->lastname}}
+        <small>{{$policy->policy_no}}</small>
       </h1>
+      <ol class="breadcrumb">
+        <li><a href="{{route('customers.index',['is_member'=>$customer->is_member])}}"><i class="fa fa-dashboard"></i>Customers</a></li>
+        <li><a href="{{route('customers.show',['customer'=>$customer->id])}}"><i ></i>Customer</a></li>
+         <li ><a href="{{route('customer.policies.index',['customer'=>$customer->id])}}"><i></i>Policies</a></li>
+         <li ><a href="{{route('customer.policies.show',['customer'=>$customer->id,'policy'=>$policy->id])}}"><i></i>Policy</a></li>
+        <li class="active">Payment Schedules</li>
+      </ol>
     </section>
 
     <!-- Main content -->
@@ -38,7 +46,7 @@
                   <td>{{$endorsement->policy->policy_no}}</td>
                   <td>{{$endorsement->type}}</td>
                   <td>{{$endorsement->amount}}</td>
-                  <td>{{$endorsement->created_at->toDateString()}}</td>
+                  <td>{{$endorsement->created_at->format('d-m-Y')}}</td>
                 </tr>
               @endforeach
               </table>
@@ -71,12 +79,6 @@
                       <select name="type" class="form-control">
                         <option>Agency Bill</option>
                       </select>
-                    </div>
-                    <div class="form-group">
-                      <label>
-                        <input type="checkbox" class="flat-red" name="is_pay_daily" value="yes" id="isPayDaily">
-                        Is Pay Daily ?
-                      </label>
                     </div>
                   <!-- /.form-group -->
                 </div>
@@ -111,30 +113,6 @@
         </div>
       </div>
       <div class="row">
-        <div class="col-md-6">
-          <div class="box box-primary">
-            <div class="box-header with-border">
-              <h3 class="box-title">Agency Commissions</h3>
-            </div>
-            <!-- /.box-header -->
-            <!-- form start -->
-              <div class="box-body">
-                <ul class="list-group list-group-unbordered">
-                  <li class="list-group-item">
-                    <b>Total Commission</b> <a class="pull-right">{{$policy->getTotalCommission()}}</a>
-                  </li>
-                </ul>
-                
-              </div>
-              <!-- /.box-body -->
-
-              <div class="box-footer">
-                
-              </div>
-          </div>
-        </div> 
-      </div>
-      <div class="row">
         <div class="col-xs-12">
           <div class="box">
             <div class="box-header with-border">
@@ -154,8 +132,6 @@
                   <th></th>
                   <th>Due Date</th>
                   <th>Premium</th>
-                  <th>Amount Paid</th>
-                  <th>Balance</th>
                   <th>Life Status</th>
                   <th>Payment Status</th>
                   <th></th>               
@@ -163,10 +139,8 @@
               @foreach($policy->paymentSchedules as $paymentSchedule)
                 <tr>
                   <td></td>
-                  <td>{{$paymentSchedule->due_date}}</td>
+                  <td>{{Carbon\Carbon::parse($paymentSchedule->due_date)->format('d-m-Y')}}</td>
                   <td>{{$paymentSchedule->amount}}</td>
-                  <td>{{$paymentSchedule->amount_paid}}</td>
-                  <td>{{$paymentSchedule->amount-$paymentSchedule->amount_paid}}</td>
                   <td>{{$paymentSchedule->lifeline_status}}</td>
                   <td>
                     <span 
@@ -184,19 +158,15 @@
                   @if($paymentSchedule->status === 'open')
                   <a href="{{route('payments.create',['paymentSchedule'=>$paymentSchedule->id])}}" class="btn btn-xs btn-info">Take Payment</a>
                   @elseif($paymentSchedule->status === 'paid')
-                  <a href="#" class="btn btn-xs btn-warning">View Payment</a>
+                  <form action="{{route('payments.update',['paymentSchedule'=>$paymentSchedule->id])}}" method="POST">
+                  {{ csrf_field() }}
+                  <button type="submit" class="btn btn-xs btn-warning">Reverse Payment</button>
+                  </form>
                   @endif
                   @endif
                   </td>
                 </tr>  
               @endforeach
-              <tr>
-                  <td></td>
-                  <td></td>
-                  <td><button type="button" class="btn btn-primary ">{{$policy->paymentSchedules->sum('amount')}}</button></td>
-                  <td><button type="button" class="btn btn-primary ">{{$policy->paymentSchedules->sum('amount_paid')}}</button></td>
-                  <td><button type="button" class="btn btn-primary ">{{$policy->paymentSchedules->sum('amount') - $policy->paymentSchedules->sum('amount_paid')}}</button></td>
-                </tr>
               </table>
             </div>
             <!-- /.box-body -->

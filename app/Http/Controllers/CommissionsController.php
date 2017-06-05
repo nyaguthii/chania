@@ -7,6 +7,10 @@ use App\domain\PaymentSchedule;
 
 class CommissionsController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
     public function index(){
 
     	$commissions=PaymentSchedule::where('status','paid')->orderBy('id','desc')->paginate(50);

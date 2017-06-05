@@ -17,5 +17,7 @@ class Payment extends Model
     	return $this->hasOne(Credit::class);
     }
 
-    
+    public function vehicleCredit(){
+    	return $this->hasOne(VehicleCredit::class);
+    }
 }

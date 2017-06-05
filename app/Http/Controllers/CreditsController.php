@@ -10,11 +10,18 @@ use Carbon\Carbon;
 class CreditsController extends Controller
 {
     
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
     public function index(Customer $customer){
 
-        $credits=$customer->credits()->orderBy('id','desc')->paginate(20);
-
-        return view('customers.credits.index',compact('customer','credits'));
+        $credits=$customer->credits()->orderBy('id','desc')->get();
+        $totalDaily=0;
+        foreach($customer->vehicles as $vehicle){
+           $totalDaily=$totalDaily + ($vehicle->dailyPayments()->where('type','Debit')->sum('amount')-$vehicle->dailyPayments()->where('type','Credit')->sum('amount')); 
+        }
+        return view('customers.credits.index',['customer'=>$customer,'credits'=>$credits,'totalDaily'=>$totalDaily]);
 
     }
 

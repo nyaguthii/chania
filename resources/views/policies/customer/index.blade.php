@@ -5,7 +5,12 @@
     <section class="content-header">
       <h1>
         {{$customer->firstname." ".$customer->lastname}}
+        <small>Policies</small>
       </h1>
+      <ol class="breadcrumb">
+        <li><a href="{{route('customers.show',['customer'=>$customer->id])}}"><i class="fa fa-dashboard"></i>Customer</a></li>
+        <li class="active">policies</li>
+      </ol>
     </section>
 
     <!-- Main content -->
@@ -48,8 +53,8 @@
                   <td><a href="{{route('customer.policies.edit',['customer'=>$customer->id,'policy'=>$policy->id])}}" class="btn btn-xs btn-default">edit</a></td>
                   <td>{{$policy->id}}</td>
                   <td>{{$policy->policy_no}}</td>
-                  <td>{{$policy->effective_date->toDateString()}}</td>
-                  <td>{{$policy->expiry_date->toDateString()}}</td>
+                  <td>{{$policy->effective_date->format('d-m-Y')}}</td>
+                  <td>{{$policy->expiry_date->format('d-m-Y')}}</td>
                   
                   <td>{{number_format($policy->total_premium)}}</td>
                   <td>{{$policy->vehicle->registration}}</td>

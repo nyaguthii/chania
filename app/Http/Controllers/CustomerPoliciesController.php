@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 use App\domain\Customer ;
 use App\domain\Policy ;
 use App\domain\Vehicle;
+use App\domain\Carrier;
 use Carbon\Carbon;
 use App\Http\Requests\PolicyRequest;
 
@@ -43,7 +45,8 @@ class CustomerPoliciesController extends Controller
      */
     public function create(Customer $customer)
     {
-        return view('policies.customer.create',compact('customer'));
+        $carriers=Carrier::all();
+        return view('policies.customer.create',['customer'=>$customer,'carriers'=>$carriers]);
     }
 
     /**
@@ -52,9 +55,23 @@ class CustomerPoliciesController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Customer $customer,PolicyRequest $request)
+    public function store(Customer $customer,Request $request)
     {  
+      $validator = Validator::make($request->all(), [
+            'policy_no' => 'required',
+            'duration_type' => 'required',
+            'agent' => 'required',
+            'effective_date' => 'required',
+            'carrier' => 'required',
+            'vehicle' => 'required',
+            'type' => 'required'
+        ]);
 
+        if ($validator->fails()) {
+            return back()->withInput()
+                        ->withErrors($validator)
+                        ->withInput();
+        }
 
         //dd($request);
        $policy= new Policy();
@@ -145,9 +162,68 @@ class CustomerPoliciesController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Policy $policy,Request $request)
     {
-        //
+       $validator = Validator::make($request->all(), [
+            'policy_no' => 'required',
+            'duration_type' => 'required',
+            'agent' => 'required',
+            'effective_date' => 'required',
+            'carrier' => 'required',
+            'vehicle' => 'required',
+            'type' => 'required'
+        ]);
+
+        if ($validator->fails()) {
+            return back()->withInput()
+                        ->withErrors($validator)
+                        ->withInput();
+        }
+       
+
+       $policy->effective_date=Carbon::createFromFormat('m/d/Y',$request['effective_date']);
+       $policy->carrier=$request['carrier'];
+       $policy->agent=$request['agent'];
+       $policy->duration=$request['duration_type'];
+       $policy->status="drafted";
+       $policy->type=$request['type'];
+
+
+       
+       $vehicle=Vehicle::where('registration',$request['vehicle'])->first();
+       //dd($vehicle->make);
+       $policy->vehicle_id=$vehicle->id;
+
+
+        $x=0;
+        switch ($policy->duration) {
+            case 'Annual':
+                $x=12;
+                break;
+            case 'Ten Months':
+                $x=10;
+                break;    
+            case 'Semi Annual':
+                $x=6;
+                break;
+            case 'Quartely':
+                $x=3;
+            case 'Monthly':
+                $x=1;
+                break;
+        }
+
+
+      $policy->expiry_date = Carbon::createFromFormat('m/d/Y',$request['effective_date'])->addMonths($x);
+
+
+
+       //$vehicle=Vehicle::find($request['vehicle']);
+       $policy->save();
+
+        session()->flash('policy-create-message','policy edited successfully');
+        //return view('policies.index',compact('customer')); 
+        return redirect()->route('customer.policies.index',['customer'=>$policy->customer]);
     }
 
     /**
@@ -183,7 +259,7 @@ class CustomerPoliciesController extends Controller
 
 
     }
-    public function suspend(Customer $customer,Policy $policy,Request $request){
+    /*public function suspend(Customer $customer,Policy $policy,Request $request){
 
         $this->validate($request,[
             'effective_date'=>'required'
@@ -204,7 +280,7 @@ class CustomerPoliciesController extends Controller
         //return view('policies.index',compact('customer')); 
         return redirect()->route('customer.policies.index',['customer'=>$customer]); 
 
-    }
+    }*/
     public function activate(Customer $customer,Policy $policy,Request $request){
 
       $this->validate($request,[
@@ -229,7 +305,7 @@ class CustomerPoliciesController extends Controller
 
     }
 
-    public function sustain(Customer $customer,Policy $policy,Request $request){
+    /*public function sustain(Customer $customer,Policy $policy,Request $request){
 
       $this->validate($request,[
             'effective_date'=>'required'
@@ -251,5 +327,5 @@ class CustomerPoliciesController extends Controller
         return redirect()->route('customer.policies.index',['customer'=>$customer]); 
 
 
-    }
+    }*/
 }

@@ -9,7 +9,8 @@
     <!-- Main content -->
     <section class="content">
       <!-- /.row -->
-      <div class="box box-default">
+      <div class="row">
+          <div class="box box-default">
             <div class="box-header with-border">
               <h3 class="box-title">Total Payments Per Day <span style="color:green"></span></h3>
 
@@ -21,15 +22,17 @@
             </div>
             <!-- /.box-header -->
             <div class="box-body table-responsive no-padding">
-              <table class="table table-hover">
+              <table class="table table-condensed">
               <tr>
                   
                   <th>Date</th>
+                  <th>Place</th>
                   <th>Amount(Kshs)</th>     
                 </tr>
               @foreach($payments as $payment)
                 <tr>
-                  <td>{{$payment->transaction_date}}</td>
+                  <td>{{Carbon\Carbon::parse($payment->transaction_date)->format('d-m-Y')}}</td>
+                  <td>{{$payment->place}}</td>
                   <td>{{number_format($payment->total_collection)}}</td>
                 </tr>
               @endforeach
@@ -68,7 +71,9 @@
             </div>
             <div class="box-footer">
             </div>
-      </div>     
+      </div>
+      </div>
+           
     </section>
     <!-- /.content -->
 </div>  

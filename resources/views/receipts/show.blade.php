@@ -41,7 +41,7 @@
         </div>
         <!-- /.col -->
         <div class="col-sm-4 invoice-col">
-          <b>Receipt #Ow{{$receipt->id}}</b><br>
+          <b>Receipt #{{$receipt->receipt_no}}</b><br>
           <br>
           <b>Vehicle Reg:</b> {{$receipt->payment->paymentSchedule->policy->vehicle->registration}}<br>
           <b>Policy no:</b> {{$receipt->payment->paymentSchedule->policy->policy_no}}<br>

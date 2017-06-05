@@ -70,12 +70,14 @@
             <table class="table table-hover">
             <tr>
                 <th>Date</th>
+                <th>From</th>
                 <th>Amount(Kshs)</th>
                                
               </tr>
               @foreach($payments as $payment)
               <tr>
-                <td>{{$payment->transaction_date}}</td>
+                <td>{{Carbon\Carbon::parse($payment->transaction_date)->format('d-m-Y')}}</td>
+                <td>{{$payment->place}}</td>
                 <td>{{number_format($payment->amount)}}</td>                 
               </tr>
               @endforeach

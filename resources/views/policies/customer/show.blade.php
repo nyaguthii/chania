@@ -4,7 +4,16 @@
   <div class="content-wrapper">
     <!-- Content Header (Page header) -->
     <section class="content-header">
-      
+      <h1>
+        {{$customer->firstname." ".$customer->lastname}}
+        <small>{{$policy->policy_no}}</small>
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="{{route('customers.index',['is_member'=>$customer->is_member])}}"><i class="fa fa-dashboard"></i>Customers</a></li>
+        <li><a href="{{route('customers.show',['customer'=>$customer->id])}}"><i ></i>Customer</a></li>
+         <li ><a href="{{route('customer.policies.index',['customer'=>$customer->id])}}"><i></i>Policies</a></li>
+        <li class="active">policy</li>
+      </ol>
     </section>
 
     <!-- Main content -->
@@ -37,6 +46,12 @@
                 <b>Duration</b> <a class="pull-right">{{$policy->duration}}</a>
               </li>
               <li class="list-group-item">
+                <b>Effective Date</b> <a class="pull-right">{{$policy->effective_date->toDateString()}}</a>
+              </li>
+              <li class="list-group-item">
+                <b>Expiry Date</b> <a class="pull-right">{{$policy->expiry_date->toDateString()}}</a>
+              </li>
+              <li class="list-group-item">
                 <b>Vehicle</b> <a class="pull-right">{{$policy->vehicle->registration}}</a>
               </li>
               @if($policy->refund)
@@ -62,32 +77,30 @@
               </li>
               @if($policy->status === 'active')
               <li class="list-group-item">
-                <button type="button" class="btn btn-warning btn-block" data-toggle="modal" data-target="#suspendModal">
-                  Suspend
-                </button>
+                <a href="{{route('suspensions.create',['policy'=>$policy->id])}}" class="btn btn-warning btn-block"><b>Suspend</b></a>
               </li>
               <li class="list-group-item">
-                <button type="button" class="btn btn-danger btn-block" data-toggle="modal" data-target="#cancelModal">
-                  Cancel
-                </button>
+                <a href="{{route('cancellations.create',['policy'=>$policy->id])}}" class="btn btn-danger btn-block"><b>Cancel</b></a>
               </li>
               <li class="list-group-item">
-                <a href="#" class="btn btn-default btn-block"><b>Make a Claim</b></a>
+                <a href="{{route('claims.create',['policy'=>$policy->id])}}" class="btn btn-default btn-block"><b>Make a Claim</b></a>
               </li>
               @endif
               @if($policy->status === 'suspended')
               <li class="list-group-item">
-                <button type="button" class="btn btn-success btn-block" data-toggle="modal" data-target="#sustainModal">
-                  Sustain Policy
-                </button>
+                <a href="{{route('suspensions.show',['policy'=>$policy->id])}}" class="btn btn-warning btn-block"><b>Sustain</b></a>
               </li>
               @endif
               @if($policy->status === 'cancelled')
-              <li class="list-group-item">
-                <button type="button" class="btn btn-info btn-block" data-toggle="modal" data-target="#activateModal">
-                  Activate Policy
-                </button>
-              </li>
+                <li class="list-group-item">
+                <form action="{{route('cancellations.activate',['policy'=>$policy->id])}}" method="POST">
+                {{ csrf_field() }}
+                  <button type="submit" class="btn btn-info btn-block" >
+                    Activate Policy
+                  </button>
+                </form>
+                </li>
+              
               @endif
               @if($policy->status === 'cancelled' && !$policy->refund)
 
@@ -123,35 +136,24 @@
               <table class="table table-hover">
               <tr>
                   <th></th>
-                  <th>ID</th>
                   <th>Date</th>
-                  <th>Type</th>
                   <th>Amount Paid(Kshs)</th>              
                 </tr>
-              {{$payments = $policy->payments()->orderBy('id','desc')->paginate(20)}}
-              @foreach($payments as $payment)
-                <tr>
-                  <td></td>
-                  <td>{{$payment->id}}</td>
-                  <td>{{$payment->transaction_date}}</td>
-                  <td>{{$payment->type}}</td>
-                  <td>{{number_format($payment->amount)}}</td>
-                  @if($payment->receipt)
-                  <td><a href="{{route('receipts.show',['receipt'=>$payment->receipt->id])}}" class="btn btn-xs btn-info">Print Receipt</a></td>
-                  @elseif(!$payment->receipt)
-                  <td></td>
-                  @endif
-                  @if($policy->status !=='cancelled')
-                  <td><a href="{{route('payments.edit',['customer'=>$customer->id,'payment'=>$payment->id])}}" class="btn btn-xs btn-warning">Edit Payment</a></td>
-                  @endif
-              @endforeach
+                @foreach($policy->paymentSchedules()->where('status','paid')->get() as $paymentSchedule)
+                  <tr>
+                    <td></td>
+                    <td>{{$paymentSchedule->due_date}}</td>
+                    <td>{{$paymentSchedule->amount}}</td>  
+                  </tr>
+                @endforeach
+              
               </table>
             </div>
             <div class="box-footer">
-              {{$payments->links()}}
+              
             </div>
             <div class="box-footer">
-              <button type="button" class="btn btn-primary pull-right"> Total(Kshs) {{$payments->sum('amount')}}</button>
+              <button type="button" class="btn btn-primary pull-right"> Total(Kshs){{$policy->paymentSchedules()->where('status','paid')->sum('amount')}} </button>
             </div>
             <!-- /.box-body -->
           </div>

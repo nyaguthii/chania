@@ -107,5 +107,12 @@ class Policy extends Model
     public function claims(){
         return $this->hasMany(Claim::class);
     }
-    
+
+    public function suspensions(){
+
+        return $this->hasMany(Suspension::class);
+    }
+    public function cancellation(){
+        return $this->hasOne(Cancellation::class);
+    }
 }
