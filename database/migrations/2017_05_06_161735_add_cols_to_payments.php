@@ -14,8 +14,8 @@ class AddColsToPayments extends Migration
     public function up()
     {
         Schema::table('payments', function (Blueprint $table) {
-            $table->string('type',50)->nullable();
-            $table->string('description',100)->nullable();
+            //$table->string('type',50)->nullable();
+            //$table->string('description',100)->nullable();
         });
     }
 

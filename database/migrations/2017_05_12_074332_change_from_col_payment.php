@@ -14,7 +14,7 @@ class ChangeFromColPayment extends Migration
     public function up()
     {
         Schema::table('payments', function (Blueprint $table) {
-            $table->renameColumn('from', 'place');
+            //$table->renameColumn('from', 'place');
         });
     }
 
