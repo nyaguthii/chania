@@ -36,8 +36,10 @@ class EndorsementsController extends Controller
         $total = $total + $endorsement->amount;
 
        }
+       
         $policy->total_premium=$total;
         $policy->status='active';
+        $policy->edited_by=auth()->id();
         $policy->save();
        
        
@@ -85,6 +87,7 @@ class EndorsementsController extends Controller
        }
         $policy->total_premium=$total;
         $policy->status='active';
+        $policy->edited_by=auth()->id();
         $policy->save();
 
         return redirect()->route('customer.policies.generate', ['customer'=>$policy->customer->id,'policy'=>$policy->id])->with('message','Endorsement updated Successfully');

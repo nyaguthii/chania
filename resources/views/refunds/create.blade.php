@@ -44,7 +44,10 @@
             <!-- /.col -->
             <div class="col-md-6">              
               <!-- /.form-group -->
-                
+              <div class="form-group">
+                  <label for="amount">Reference</label>
+                  <input name="reference"  class="form-control" >
+                </div>
 
               <!-- /.form-group -->
             </div>

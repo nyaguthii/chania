@@ -17,5 +17,9 @@ class PaymentSchedule extends Model
 
     	return $this->hasOne(VehicleCredit::class);
     }
+    public function credit(){
+        return $this->hasOne(Credit::class);
+    }
+
     
 }

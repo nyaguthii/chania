@@ -57,7 +57,7 @@ class CustomerPoliciesController extends Controller
      */
     public function store(Customer $customer,Request $request)
     {  
-      $validator = Validator::make($request->all(), [
+        $this->validate($request,[
             'policy_no' => 'required',
             'duration_type' => 'required',
             'agent' => 'required',
@@ -66,12 +66,6 @@ class CustomerPoliciesController extends Controller
             'vehicle' => 'required',
             'type' => 'required'
         ]);
-
-        if ($validator->fails()) {
-            return back()->withInput()
-                        ->withErrors($validator)
-                        ->withInput();
-        }
 
         //dd($request);
        $policy= new Policy();
@@ -110,7 +104,7 @@ class CustomerPoliciesController extends Controller
 
 
       $policy->expiry_date = Carbon::createFromFormat('m/d/Y',$request['effective_date'])->addMonths($x);
-
+      $policy->created_by=auth()->id();
 
 
        //$vehicle=Vehicle::find($request['vehicle']);
@@ -164,28 +158,22 @@ class CustomerPoliciesController extends Controller
      */
     public function update(Policy $policy,Request $request)
     {
-       $validator = Validator::make($request->all(), [
-            'policy_no' => 'required',
-            'duration_type' => 'required',
-            'agent' => 'required',
-            'effective_date' => 'required',
-            'carrier' => 'required',
-            'vehicle' => 'required',
-            'type' => 'required'
-        ]);
-
-        if ($validator->fails()) {
-            return back()->withInput()
-                        ->withErrors($validator)
-                        ->withInput();
-        }
+       $this->validate($request,[
+        'policy_no' => 'required',
+        'duration_type' => 'required',
+        'agent' => 'required',
+        'effective_date' => 'required',
+        'carrier' => 'required',
+        'vehicle' => 'required',
+        'type' => 'required'
+       ]);
        
 
        $policy->effective_date=Carbon::createFromFormat('m/d/Y',$request['effective_date']);
        $policy->carrier=$request['carrier'];
        $policy->agent=$request['agent'];
        $policy->duration=$request['duration_type'];
-       $policy->status="drafted";
+       //$policy->status="drafted";
        $policy->type=$request['type'];
 
 
@@ -219,6 +207,7 @@ class CustomerPoliciesController extends Controller
 
 
        //$vehicle=Vehicle::find($request['vehicle']);
+       $policy->edited_by=auth()->id();
        $policy->save();
 
         session()->flash('policy-create-message','policy edited successfully');

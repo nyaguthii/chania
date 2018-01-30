@@ -20,6 +20,7 @@ class PaymentSchedulesController extends Controller
 
     }
 
+
     public function store(Policy $policy,ScheduleRequest $request){
 
     	//$days=$policy->expiry_date->diffInDays($policy->effective_date);
@@ -44,7 +45,8 @@ class PaymentSchedulesController extends Controller
                 'due_date'=>$dueDate,
                 'amount'=>$premium,
                 'status'=>'open',
-                'lifeline_status'=>'active'
+                'lifeline_status'=>'active',
+                'created_by'=>auth()->user()->id
                 ]);
               $dueDate=$dueDate->addMonths(1);
 
@@ -57,10 +59,30 @@ class PaymentSchedulesController extends Controller
 
     	
     }
+    public function edit(PaymentSchedule $paymentSchedule){
+
+        return view('paymentschedules.edit',['paymentSchedule'=>$paymentSchedule]);
+
+    }
+    public function update2(PaymentSchedule $paymentSchedule,Request $request){
+
+        $this->validate($request,[
+                'new_due_date'=>'required'
+            ]);
+        $paymentSchedule->due_date=Carbon::createFromFormat('m/d/Y',$request['new_due_date']);
+        $paymentSchedule->edited_by=auth()->id();
+        $paymentSchedule->save();
+
+        session()->flash('message','payment schedule due date edited successfully');
+         $customer=$paymentSchedule->policy->customer;
+      //return view('policies.show',['customer'=>$customer,'policy'=>$paymentSchedule->policy]);
+       return redirect()->route('customer.policies.generate',['customer'=>$customer,'policy'=>$paymentSchedule->policy]);
+
+    }
 
     public function dueForm(){
 
-        return view('payments.due');
+        return view('prepayments.due');
     }
 
     public function due(Request $request){
@@ -78,10 +100,11 @@ class PaymentSchedulesController extends Controller
         $paymentSchedules=PaymentSchedule::whereBetween('due_date',[$start_date,$end_date])
         ->where('status','open')
         ->where('lifeline_status','active')
+        ->orderBy('due_date','asc')
         ->get();
         //dd($paymentSchedules);
 
-        return view('payments.due',['paymentSchedules'=>$paymentSchedules]);
+        return view('prepayments.due',['paymentSchedules'=>$paymentSchedules]);
         
         
     }

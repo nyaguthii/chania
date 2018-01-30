@@ -25,21 +25,45 @@ class LoginController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/home';
+    //protected $redirectTo = '/home';
 
     /**
      * Create a new controller instance.
      *
      * @return void
      */
+    
     public function __construct()
     {
         $this->middleware('guest', ['except' => 'logout']);
     }
+    protected function redirectTo()
+    {
+        if(auth()->user()->hasRole('TYRE')){
+            return '/tyreshome';
+        }elseif(auth()->user()->hasRole('INSURANCE')){
+            return '/home';  
+        }elseif(auth()->user()->hasRole('CASHIER')){
+            return '/tyreshome';  
+        }elseif(auth()->user()->hasRole('ADMIN')){
+            return '/tyreshome';
+        }else{
+
+        }
+        
+    }
     public function logout()
     {
         auth()->logout();
+
+        //return redirect(\URL::previous());
         return redirect()->route('login');
 
     }
+    protected function credentials(\Illuminate\Http\Request $request)
+    {
+        //return $request->only($this->username(), 'password');
+        return ['email' => $request->{$this->username()}, 'password' => $request->password, 'is_active' =>'yes'];
+    }
+
 }

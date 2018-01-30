@@ -3,230 +3,173 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Collection;
-use App\domain\PaymentSchedule;
-//use App\domain\Payment;
-use App\domain\Receipt;
-use App\domain\Customer;
-use App\domain\Credit;
-use App\Http\Requests\PaymentRequest;
+use App\domain\PaymentType;
+use App\domain\Vehicle;
+use App\domain\Payment;
 use Carbon\Carbon;
-use App\domain\BankTransaction;
-use App\domain\VehicleCredit;
+use DB;
+use DataTables;
+use App\domain\Receipt;
+use App\AfricasTalkingGateway;
+
 
 class PaymentsController extends Controller
 {
-	
-    public function __construct()
+    
+    protected $gateway;
+    public function __construct(AfricasTalkingGateway $gateway)
     {
-        $this->middleware('auth');
+        $this->middleware(['auth','cashier']);
+        $this->gateway=$gateway;
     }
-    public function index(Customer $customer){
-
-        $policies= $customer->policies()->orderBy('id', 'desc')->get();
-
-		return view('payments.index',compact('customer','policies'));
-
-	}
-	public function show(){
-
-	}
-    public function edit(Customer $customer,Payment $payment){
-
-        return view('payments.edit',['payment'=>$payment]);
-
-    }
-    public function update(PaymentSchedule $paymentSchedule){
+    public function index(){
         
-        $paymentSchedule->status="open";
-        $vehicleCredit=$paymentSchedule->vehicleCredit;
-        $vehicleCredit->delete();
-        $paymentSchedule->save();
-         
-         
-         
-         session()->flash('message','payment reversed successfully');
-         $customer=$paymentSchedule->policy->customer;
-      //return view('policies.show',['customer'=>$customer,'policy'=>$paymentSchedule->policy]);
-       return redirect()->route('customer.policies.generate',['customer'=>$customer,'policy'=>$paymentSchedule->policy]);
-
+        return view('payments.index');
     }
-    public function create(PaymentSchedule $paymentSchedule){
-
-    	//dd($paymentSchedule);
-
-    	return view('payments.create',compact('paymentSchedule'));
-    }
-
-    public function store(PaymentSchedule $paymentSchedule,PaymentRequest $paymentRequest){
- 
-
-         
-
-        $paymentSchedule->status="paid";
-
-        $vehicleCredit=new VehicleCredit();
-        $vehicleCredit->amount=$paymentSchedule->amount;
-        $vehicleCredit->description="Agency Payment for ".$paymentSchedule->policy->policy_no." date Due ".$paymentSchedule->due_date;
-        $vehicleCredit->transaction_date=Carbon::createFromFormat('m/d/Y',$paymentRequest['transaction_date']);
-        $vehicleCredit->vehicle_id=$paymentSchedule->policy->vehicle->id;
-        $vehicleCredit->type="Auto";
-        $vehicleCredit->statement_impact="minus";
-
-        $paymentSchedule->vehicleCredit()->save($vehicleCredit);
-        $paymentSchedule->save();
-
-
-        //$vehicle->vehicleCredits()->save($vehicleCredit);
-
-      session()->flash('message','payment created successfully');
-      $customer=$paymentSchedule->policy->customer;
-      //return view('policies.show',['customer'=>$customer,'policy'=>$paymentSchedule->policy]);
-      return redirect()->route('customer.policies.generate',['customer'=>$customer,'policy'=>$paymentSchedule->policy]);
-    }
-
-    public function showDailyForm(){
-
-
-        $today=Carbon::now()->toDateString();
-        //$payments=DB::table('payments')->whereDate('created_at',$today)->get();
-
-
-         /*$creditPayments=DB::table('credit_payments')
-         ->whereDate('transaction_date',$today)
-         ->select('id','transaction_date','place','amount');*/
-
-         $payments=DB::table('daily_payments')
-         ->whereDate('transaction_date',$today)
-         ->where('type','Debit')
-         ->select('id','transaction_date','place','amount')
-         ->get();
-
-        //dd($payments);
+    public function ajax(){
+        $payments = DB::table('payments')
+        ->join('customers', 'customer_id', '=', 'customers.id')                                                         
+        ->select(DB::raw("payments.id,concat(customers.firstname,' ',customers.middlename,' ',customers.lastname) as name,FORMAT(payments.amount,0) amount,DATE_FORMAT(payments.transaction_date,'%d-%m-%Y') as transaction_date"))
+        ->where('payments.created_by','=',auth()->id())
+        ->get();
+        //$vehicles = Vehicle::select(['id','year','model']);
         
+        return Datatables::of($payments)
+        ->addColumn('action', function ($payment) {
+            return '
+            <div class="pull-right">
+            <a href="/receipts/'.$payment->id.'/show" class="btn btn-xs btn-primary pull-left"><i class="fa fa-print" aria-hidden="true"></i>Print</a>
+            <a href="/payments/'.$payment->id.'/edit" class="btn btn-xs btn-warning pull-left"><i class="fa fa-pencil-square-o" aria-hidden="true"></i>Edit</a>
+            <a href="/payments/'.$payment->id.'/delete" class="btn btn-xs btn-danger pull-left"><i class="fa fa-trash-o" aria-hidden="true"></i>Delete</a>
+            </div>
+            ';
+        })->make(true);
+    }
+    
+    public function create(Vehicle $vehicle){
 
-        return view('payments.daily',['payments'=>$payments]);
+        $paymentTypes=PaymentType::all();
+        return view('payments.create',['vehicle'=>$vehicle,'paymentTypes'=>$paymentTypes]);
     }
 
-    public function getDaily(Request $request){
-
+    public function store(Vehicle $vehicle,Request $request){
         $this->validate($request,[
-          'date'=>'required|date'
-            ]);
+            'transaction_date'=>'required',
+            'amount'=>'required|integer',
+            'from'=>'required'
+        ]);
 
-        $date=Carbon::createFromFormat('m/d/Y',$request['date'])->toDateString();
-        //$payments=Payment::whereDate('transaction_date',$date)->get();
-        /*$creditPayments=DB::table('credit_payments')
-         ->whereDate('transaction_date',$date)
-         ->select('id','transaction_date','place','amount');*/
+        $payment = new Payment();
+        $payment->transaction_date=Carbon::createFromFormat('m/d/Y',$request['transaction_date']);
+        $payment->amount=$request['amount'];
+        $payment->paid_from=$request['from'];
+        $payment->created_by=auth()->id();
+        $payment->type=$request['type'];
+        $payment->vehicle_id=$vehicle->id;
 
-         $$payments=DB::table('daily_payments')
-         ->whereDate('transaction_date',$date)
-         ->where('type','Debit')
-         ->select('id','transaction_date','place','amount')
-         ->get();
-
+        $message="Payment of Kshs ".number_format($request['amount'],0)." for".$request['type']." By ".$vehicle->registration." Date: ".Carbon::createFromFormat('m/d/Y',$request['transaction_date']);
         
-        return view('payments.daily',['payments'=>$payments]);
+        $customer=$vehicle->customer;
+        if($customer->payments()->save($payment)){
 
-    }
+            $receipt = new Receipt();
+            $receipt->amount=$payment->amount;
+            $payment->receipt()->save($receipt);
+            try 
+            { 
+              // Thats it, hit send and we'll take care of the rest.
+              //$this->gateway->sendMessage($customer->contact, $message);
+            }
+            catch ( AfricasTalkingGatewayException $e )
+            {
+              echo "Encountered an error while sending: ".$e->getMessage();
+            }
 
-    public function showRangeForm(){
-
-     return view('payments.range');
-   
-
-    }
-    public function getRange(Request $request){
-
-
-
-        $this->validate($request,[
-           'start_date'=>'required|date|before:end_date',
-            'end_date'=>'required|date|after:start_date',
-            ]);
-        $start_date=Carbon::createFromFormat('m/d/Y',$request['start_date']);
-        $end_date=Carbon::createFromFormat('m/d/Y',$request['end_date']);
-       
-
-        if($request['is_member']=="all"){
-
-            $dailyPayments=DB::table('daily_payments')
-             ->whereBetween('transaction_date',[$start_date,$end_date])
-             ->where('type','Debit')
-             ->select('transaction_date','amount')
-             ->get();
-                //$payments=DB::table('payments')->whereBetween('transaction_date',[$start_date,$end_date])->paginate(20);
+            return redirect()->route('payments.index')->with('message','Payment created');
 
         }else{
-
-            //$payments=DB::table('payments')->whereBetween('transaction_date',[$start_date,$end_date])->paginate(20);
-            
-            $dailyPayments=DB::table('daily_payments')
-             ->whereBetween('transaction_date',[$start_date,$end_date])
-             ->where('type','Debit')
-             ->join('vehicles','daily_payments.vehicle_id','=','vehicles.id')
-             ->join('customers','vehicles.customer_id','=','customers.id')
-             ->where('customers.is_member',$request['is_member'])
-             ->select('transaction_date','amount')
-             ->get();
-
-        
-
-
-                /*$payments=Payment::whereBetween('transaction_date',[$start_date,$end_date])
-                ->whereHas('paymentSchedule',function($query) use ($request){
-                    $query->whereHas('policy',function($query) use ($request){
-                        $query->whereHas('customer',function($query) use ($request){
-                            $query->where('is_member',$request['is_member']);
-                        });
-                    });
-                    
-                })
-                ->paginate(20);
-                dd($payments);*/
-
-
+            return back()->withInput();
         }
-        
-        
-       
-        return view('payments.range',['payments'=>$payments]);
 
     }
 
-    public function totalPerDay(){     
-        
-            $page = isset($_GET['page']) && !empty($_GET['page'])?(int)$_GET['page']:1;
-            $items_per_page = 100;
-            $offset = ($page-1)*$items_per_page;
-            $payments = DB::select( DB::raw("
-                select SQL_CALC_FOUND_ROWS transaction_date, payments.transaction_date,payments.place,sum(payments.amount) as total_collection from (
-                 select id,transaction_date,place,amount from daily_payments
-                 where type='Debit'
-                ) as payments
-                group by place,transaction_date
-                order by transaction_date desc
+    public function edit(Payment $payment){
 
-                LIMIT $offset,$items_per_page
-
-                ") );
-
-            $total_rows = DB::select( DB::raw("
-                SELECT FOUND_ROWS() as rows
-
-                ") );
-            //$bankTransactions=DB::table('bank_transactions')->orderBy('id','desc')->paginate(100);
-
-            
-
-            return view('payments.totalperday',['payments'=>$payments,'total_rows'=>$total_rows[0]->rows,'page'=>$page,'items_per_page'=>$items_per_page]);
+        $paymentTypes=PaymentType::all();
+        return view('payments.edit',['payment'=>$payment,'paymentTypes'=>$paymentTypes]);
 
     }
-        
 
+    public function update(Request $request,Payment $payment){
+
+        $this->validate($request,[
+            'transaction_date'=>'required',
+            'amount'=>'required|integer',
+            'from'=>'required'
+        ]);
+
+        $payment->transaction_date=Carbon::createFromFormat('m/d/Y',$request['transaction_date']);
+        $payment->amount=$request['amount'];
+        $payment->paid_from=$request['from'];
+        $payment->edited_by=auth()->id();
+        $payment->type=$request['type'];
+        
+        $receipt=$payment->receipt;
+        $receipt->amount=$request['amount'];
+        
+        if($payment->save()){
+            $receipt->save();
+            return redirect()->route('payments.index')->with('message','Payment Edited Successfully');
+        }else{
+            return back()->withInput();  
+        }
+
+    }
+    public function delete(Payment $payment){
+
+        return view('payments.delete',['payment'=>$payment]);
+
+    }
+    public function destroy(Payment $payment){
+
+        $receipt=$payment->receipt;
+
+        $receipt->delete();
+        $payment->delete();
+        return redirect()->route('payments.index')->with('message','Payment Deleted Successfully');
+
+    }
+
+    public function dailyPayments(){
+        return view('payments.shop.daily');
+    }
+    public function dailyPaymentsAjax(){
+
+        $payments = DB::table('payments')
+        ->join('customers', 'customer_id', '=', 'customers.id')
+        ->select(DB::raw("payments.id,concat(customers.firstname,' ',customers.middlename,' ',customers.lastname) as name,payments.amount,DATE_FORMAT(payments.transaction_date,'%d-%m-%Y') as transaction_date"))
+        ->where('type','=','TYRE')
+        ->get();
+        //$vehicles = Vehicle::select(['id','year','model']);
+        
+        return Datatables::of($payments)->make(true);
+
+    }
+    public function excess(){
+        return view('payments.excess');
+    }
+    public function excessAjax(){
+
+        $payments = DB::table('payments')
+        ->join('customers', 'customer_id', '=', 'customers.id')
+        ->join('vehicles','vehicle_id','=','vehicles.id')
+        ->select(DB::raw("payments.id,concat(customers.firstname,' ',customers.middlename,' ',customers.lastname) as name,payments.amount,vehicles.registration,DATE_FORMAT(payments.transaction_date,'%d-%m-%Y') as transaction_date"))
+        ->where('payments.type','=','EXCESS')
+        ->get();
+        //$vehicles = Vehicle::select(['id','year','model']);
+        
+        return Datatables::of($payments)->make(true);
+
+    }
 
 }
-

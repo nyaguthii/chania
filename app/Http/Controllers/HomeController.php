@@ -26,13 +26,16 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $tomorrow = Carbon::tomorrow();
-        $paymentSchedules=PaymentSchedule::where('due_date',$tomorrow)
-        ->where('lifeline_status','active')
-        ->where('status','open')
-        ->get();
-        //dd($paymentSchedules);
         
-        return view('home',['paymentSchedules'=>$paymentSchedules]);
+            $tomorrow = Carbon::tomorrow();
+            $paymentSchedules=PaymentSchedule::where('due_date',$tomorrow)
+            ->where('lifeline_status','active')
+            ->where('status','open')
+            ->get();
+            //dd($paymentSchedules);
+            
+           return view('dashboard.insurance-home',['paymentSchedules'=>$paymentSchedules]);
+
+        
     }
 }

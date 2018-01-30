@@ -28,7 +28,7 @@
               <!-- Menu Footer-->
               <li class="user-footer">
                 <div class="pull-left">
-                  <a href="{{route('users.edit',['user'=>auth()->user()->id])}}" class="btn btn-default btn-flat">Change Password</a>
+                  <a href="{{route('users.changepassword',['user'=>auth()->user()->id])}}" class="btn btn-default btn-flat">Change Password</a>
                 </div>
                 <div class="pull-right">
                 <form id="logout-form" action="{{ route('logout') }}" method="POST" >

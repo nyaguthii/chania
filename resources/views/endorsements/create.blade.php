@@ -37,9 +37,6 @@
                       <label>Type</label>
                       <select  class="form-control" name="type" id="type" required>
                         <option>Base Premium</option>
-                        <option>Positive endorsement</option>
-                        <option>Fees</option>
-                        <option>Taxes</option>
                       </select>
                     </div>
                     <div class="form-group">

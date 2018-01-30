@@ -20,6 +20,9 @@ class Customer extends Model
 
      	return $this->hasMany(Vehicle::class);
      }
+     public function payments(){
+         return $this->hasMany(Payment::class);
+     }
 
      public function paymentSchedules(){
 
@@ -41,4 +44,17 @@ class Customer extends Model
         
         return $this->hasMany(CreditPayment::class);
      }
+
+     public function orders(){
+         return $this->hasMany(Order::class);
+     }
+
+     public function difference(){
+        $payments=$this->payments->where('type','INSURANCE')->sum('amount');
+        $credits=$this->credits->where('type','INSURANCE')->sum('amount');
+
+        return $payments-$credits;    
+     }
+
+
 }

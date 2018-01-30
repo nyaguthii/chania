@@ -17,7 +17,7 @@
           </div>
         </div>
         <!-- /.box-header -->
-        <form action="#" method="POST" role="form">
+        <form action="{{route('refunds.update',['refund'=>$refund->id])}}" method="POST" role="form">
              {{ csrf_field() }}
         <div class="box-body">
           <div class="row">

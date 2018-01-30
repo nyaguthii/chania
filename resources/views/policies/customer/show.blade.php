@@ -46,10 +46,10 @@
                 <b>Duration</b> <a class="pull-right">{{$policy->duration}}</a>
               </li>
               <li class="list-group-item">
-                <b>Effective Date</b> <a class="pull-right">{{$policy->effective_date->toDateString()}}</a>
+                <b>Effective Date</b> <a class="pull-right">{{$policy->effective_date->format('d-m-Y')}}</a>
               </li>
               <li class="list-group-item">
-                <b>Expiry Date</b> <a class="pull-right">{{$policy->expiry_date->toDateString()}}</a>
+                <b>Expiry Date</b> <a class="pull-right">{{$policy->expiry_date->format('d-m-Y')}}</a>
               </li>
               <li class="list-group-item">
                 <b>Vehicle</b> <a class="pull-right">{{$policy->vehicle->registration}}</a>

@@ -48,6 +48,9 @@
                 </a>
               </li>
               <li class="list-group-item">
+                <a class="btn btn-block btn-warning btn-flat" href="{{route('credits.create',['customer'=>$customer->id])}}">Add Due Amount</a>
+              </li>
+              <li class="list-group-item">
                 <a class="btn btn-block btn-primary btn-flat" href="{{route('customers.statementdate',['customer'=>$customer->id])}}">Statement</a>
               </li>
             </ul>
@@ -109,7 +112,7 @@
         <div class="col-xs-12">
         <div class="box box-default">
           <div class="box-header with-border">
-          Amount Due     
+          Premiums Due     
             <div class="box-tools pull-right">
               <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
                <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-remove"></i></button>
@@ -129,8 +132,9 @@
               </tr>
               @foreach($paymentSchedules as $paymentSchedule)
               <tr>
-              <td>{{$paymentSchedule->pid}}</td>
-              <td>{{$paymentSchedule->due_date}}</td>
+              
+              <td>{{$paymentSchedule->pid}}</td>            
+              <td>{{Carbon\Carbon::parse($paymentSchedule->due_date)->format('d-m-Y')}}</td>
               <td>{{$paymentSchedule->policy_no}}</td>
               <td>{{$paymentSchedule->registration}}</td>
               <td>{{$paymentSchedule->pamount}}</td>

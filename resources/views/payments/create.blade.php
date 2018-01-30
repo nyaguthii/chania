@@ -4,7 +4,7 @@
     <!-- Content Header (Page header) -->
     <section class="content-header">
         <h1>
-        Policy Number :{{$paymentSchedule->policy->policy_no}} 
+       
       </h1>
       
     </section>
@@ -22,7 +22,7 @@
               </div>
             </div>
             <!-- /.box-header -->
-            <form action="{{route('payments.store',['paymentSchedule'=>$paymentSchedule->id])}}" method="POST">
+            <form action="{{route('payments.store',['vehicle'=>$vehicle->id])}}" method="POST">
             {{ csrf_field() }}
             <div class="box-body">
               <div class="row">
@@ -40,9 +40,13 @@
                         </div>
                         <!-- /.input group -->
                       </div>
-                    <div class="form-group">
-                      <label for="policy-id">Premium Amount(Kshs)</label>
-                      <input class="form-control" disabled="disabled" value="{{$paymentSchedule->amount}}">
+                      <div class="form-group">
+                      <label>Type</label>
+                      <select  class="form-control" name="type"  >
+                      @foreach($paymentTypes as $paymentType)
+                        <option>{{$paymentType->name}}</option>
+                      @endforeach      
+                      </select>
                     </div>
                   <!-- /.form-group -->
                 </div>
@@ -51,8 +55,15 @@
                   <!-- /.form-group -->
                     <div class="form-group">
                       <label for="policy-id">Amount(Kshs)</label>
-                      <input class="form-control" name="amount" id="amount" value="{{$paymentSchedule->amount}}" disabled>
+                      <input class="form-control" name="amount" id="amount" placeholder="Amount">
                   <!-- /.form-group -->
+                    </div>
+                    <div class="form-group">
+                      <label>From</label>
+                      <select  class="form-control" name="from"  >
+                        <option>Office</option>
+                        <option>Field</option>
+                      </select>
                     </div>
                   <div class="col-md-12">
                     <div class="row">

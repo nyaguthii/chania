@@ -14,4 +14,8 @@ class Credit extends Model
 
     	return $this->belongsTo(Payment::class);
     }
+    public function paymentSchedule(){
+
+        return $this->belongsTo(PaymentSchedule::class);
+    }
 }

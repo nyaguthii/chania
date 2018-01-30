@@ -8,7 +8,9 @@ use Illuminate\Support\Facades\Validator;
 use App\services\CustomerService ;
 use App\domain\Customer;
 use Carbon\Carbon;
+use DataTables;
 use App\Http\Requests\CustomerForm;
+use PDF;
 
 class CustomersController extends Controller
 {
@@ -20,7 +22,7 @@ class CustomersController extends Controller
     public function __construct(){
 
         $this->middleware('auth');
-        //$this->customerService=$customerService;
+        
     }
     /**
      * Display a listing of the resource.
@@ -32,7 +34,7 @@ class CustomersController extends Controller
         //$customers=$customerService->all();
         //$customers=DB::table('customers');
         //$customers=DB::table('customers')->paginate(10);
-
+        
         $customers=DB::table('customers')->where('is_member','=',$is_member)->paginate(50);
         if($is_member==1){
             return view('customers.index',['customers'=>$customers,'is_member'=>$is_member]);
@@ -41,12 +43,52 @@ class CustomersController extends Controller
         }
         
     }
+    public function index2(){
+        //$customers=Customer::('firstname');
+        $customers = Customer::all()->lists('full_name', 'id')->toArray();
+         
+    }
 
     /**
      * Show the form for creating a new resource.
      *
      * @return \Illuminate\Http\Response
      */
+
+    public function membersAjax(){
+        $customers = DB::table('customers')
+        ->select(DB::raw("id,member_id,concat(firstname,' ',middlename,' ',lastname) as name"))
+        ->where('is_member','=','1')
+        ->get();
+        //$vehicles = Vehicle::select(['id','year','model']);
+        
+        return Datatables::of($customers)
+        ->addColumn('action', function ($customer) {
+            return '
+            <div class="pull-right">
+            <a href="/customers/'.$customer->id.'/payments/create" class="btn btn-xs btn-primary pull-left"><i class="fa fa-print" aria-hidden="true"></i>Take Payment</a>           
+            </div>
+            ';
+        })->make(true);
+
+    }
+    public function nonMembersAjax(){
+        $customers = DB::table('customers')
+        ->select(DB::raw("id,member_id,concat(firstname,' ',middlename,' ',lastname) as name"))
+        ->where('is_member','=','0')
+        ->get();
+        //$vehicles = Vehicle::select(['id','year','model']);
+        
+        return Datatables::of($customers)
+        ->addColumn('action', function ($customer) {
+            return '
+            <div class="pull-right">
+            <a href="/customers/'.$customer->id.'/payments/create" class="btn btn-xs btn-primary pull-left"><i class="fa fa-print" aria-hidden="true"></i>Take Payment</a>           
+            </div>
+            ';
+        })->make(true);
+
+    }
     public function create()
     {
         return view('customers.create');
@@ -65,21 +107,17 @@ class CustomersController extends Controller
      */
     public function store(Request $request)
     {  
-       $validator = Validator::make($request->all(), [
-            'type' => 'required',
-            'firstname' => 'required',
-            'middlename' => 'required',
-            'address' => 'required',
-            'contact' => 'required',
-            'member_id'=>'required|unique:customers',
-            'pin' => 'required'
-        ]);
+       $this->validate($request,[
+        'type' => 'required',
+        'firstname' => 'required',
+        'middlename' => 'required',
+        'address' => 'required',
+        'contact' => 'required|size:10',
+        'member_id'=>'required|unique:customers',
+        'pin' => 'required'
 
-        if ($validator->fails()) {
-            return back()->withInput()
-                        ->withErrors($validator)
-                        ->withInput();
-        }
+       ]);
+       
 
        
        //Customer::create(request(['type','firstname','lastname','middlename','insured_id','address','contact']));
@@ -90,32 +128,28 @@ class CustomersController extends Controller
        $customer->middlename=$request['middlename'];
        $customer->insured_id=$request['insured_id'];
        $customer->address=$request['address'];
-       $customer->contact=$request['contact'];
+       $customer->contact='+254'.substr($request['contact'],1,10);
        $customer->pin=$request['pin'];
        $customer->member_id=$request['member_id'];
        $customer->is_member=1;
+       $customer->created_by=auth()->id();
 
        $customer->save();
-
-       return redirect()->action('CustomersController@index',['is_member'=>$customer->is_member])->withInput()->with('message','Customer Created');
+       return redirect()->route('members.index')->with('message','Member Added');
+       //return redirect()->action('CustomersController@index',['is_member'=>$customer->is_member])->withInput()->with('message','Customer Created');
     }
     public function store2(Request $request)
     {  
        
-       $validator = Validator::make($request->all(), [
-            'type'=>'required',
-        'address'=>'required',
-        'pin'=>'required',
-        'contact'=>'required',
-        'firstname'=>'required',
-        'middlename'=>'required'
-        ]);
-
-        if ($validator->fails()) {
-            return back()->withInput()
-                        ->withErrors($validator)
-                        ->withInput();
-        }
+        $this->validate($request,[
+            'type' => 'required',
+            'firstname' => 'required',
+            'middlename' => 'required',
+            'address' => 'required',
+            'contact' => 'required|size:10',
+            'pin' => 'required'
+    
+           ]);
        
        
        $customer=new Customer();
@@ -124,13 +158,14 @@ class CustomersController extends Controller
        $customer->lastname=$request['lastname'];
        $customer->middlename=$request['middlename'];
        $customer->address=$request['address'];
-       $customer->contact=$request['contact'];
+       $customer->contact='+254'.substr($request['contact'],1,10);
        $customer->pin=$request['pin'];
        $customer->is_member=0;
+       $customer->created_by=auth()->id();
 
        $customer->save();
-
-       return redirect()->action('CustomersController@index',['is_member'=>$customer->is_member])->withInput()->with('message','Customer Created');
+       return redirect()->route('nonmembers.index')->with('message','Nom member Added');
+       //return redirect()->action('CustomersController@index',['is_member'=>$customer->is_member])->withInput()->with('message','Customer Created');
     }
 
     /**
@@ -177,39 +212,40 @@ class CustomersController extends Controller
     public function update(Customer $customer,Request $request)
     {
         
-        
-        $validator = Validator::make($request->all(), [
-            'firstname'=>'required',
-            'middlename'=>'required',
-            'contact'=>'required',
-            'pin'=>'required',
-            'type'=>'required'
-        ]);
-
-        if ($validator->fails()) {
-            return back()->withInput()
-                        ->withErrors($validator)
-                        ->withInput();
-        }
+      $this->validate($request,[
+        'firstname'=>'required',
+        'middlename'=>'required',
+        'contact'=>'required|size:10',
+        'pin'=>'required',
+        'type'=>'required'
+      ]);
         
         if($request['is_member'] ==1){
             $is_member = 1;
+            $customer->member_id=$request['member_id'];
 
         }else{
-           $is_member = 0; 
+           $is_member = 0;
+           $customer->member_id="";
         }
         $customer->firstname=$request['firstname'];
         $customer->lastname=$request['lastname'];
         $customer->type=$request['type'];
         $customer->middlename=$request['middlename'];
         $customer->address=$request['address'];
-        $customer->contact=$request['contact'];
+        $customer->contact='+254'.substr($request['contact'],1,10);
         $customer->pin=$request['pin'];
-        $customer->member_id=$request['member_id'];
         $customer->is_member=$is_member;
+        $customer->edited_by=auth()->id();
 
         $customer->save();
-        return redirect()->action('CustomersController@index',['is_member'=>$customer->is_member])->with('message','Customer Updated');
+        if($is_member==1){    
+            return redirect()->route('members.index')->with('message','Member Edited');
+        }else if($is_member==0){
+            return redirect()->route('nonmembers.index')->with('message','Non Member Edited');
+        }
+        
+        
         
     }
 
@@ -244,61 +280,46 @@ class CustomersController extends Controller
 
     public function statement(Customer $customer,Request $request){
 
+        $this->validate($request,[
+            'statement_date'=>'required',
+            'to_date'=>'required'
+            ]);
+       
         $date=Carbon::createFromFormat('m/d/Y',$request['statement_date']);
+        $todate=Carbon::createFromFormat('m/d/Y',$request['to_date']);
 
-        $dailyPayments=DB::table('daily_payments')
-         ->join('vehicles','vehicles.id','=','daily_payments.vehicle_id')
-         ->join('customers','customers.id','=','vehicles.customer_id')
-         ->whereDate('daily_payments.transaction_date','>=',$date)
-         ->where('daily_payments.type','Debit')
-         ->where('vehicles.customer_id',$customer->id)
-         ->select('daily_payments.id','daily_payments.transaction_date','daily_payments.amount','daily_payments.statement_impact');
 
-         $dailyRefunds=DB::table('daily_payments')
-         ->join('vehicles','vehicles.id','=','daily_payments.vehicle_id')
-         ->join('customers','customers.id','=','vehicles.customer_id')
-         ->whereDate('daily_payments.transaction_date','>=',$date)
-         ->where('daily_payments.type','Credit')
-         ->where('vehicles.customer_id',$customer->id)
-         ->select('daily_payments.id','daily_payments.transaction_date','daily_payments.amount','daily_payments.statement_impact');
+    
+        $payments=DB::table('payments')
+         ->whereBetween('transaction_date',[$date,$todate])
+         ->where('customer_id',$customer->id)
+         ->where('type','INSURANCE')
+         ->selectRaw("id,transaction_date,amount,type,description,'add' as statement_impact");
 
-         $transactions=DB::table('vehicle_credits')
-         ->join('vehicles','vehicles.id','=','vehicle_credits.vehicle_id')
-         ->join('customers','vehicles.customer_id','=','customers.id')
-         ->where('customers.id',$customer->id)
-         ->whereDate('vehicle_credits.transaction_date','>=',$date)
-         ->select('vehicle_credits.id','vehicle_credits.transaction_date','vehicle_credits.amount','vehicle_credits.statement_impact')
-         ->union($dailyPayments)
-         ->union($dailyRefunds)
+         
+
+         $transactions=DB::table('credits')
+         ->where('customer_id',$customer->id)
+         ->whereBetween('credits.transaction_date',[$date,$todate])
+         ->where('type','INSURANCE')
+         ->selectRaw("id,transaction_date,amount,type,description,'minus' as statement_impact")
+         ->union($payments)
          ->orderBy('transaction_date','asc')
          ->get();
 
-         $dailyPaymentsTotal=DB::table('daily_payments')
-         ->join('vehicles','vehicles.id','=','daily_payments.vehicle_id')
-         ->join('customers','customers.id','=','vehicles.customer_id')
-         ->whereDate('daily_payments.transaction_date','<',$date)
-         ->where('daily_payments.type','Debit')
-         ->where('vehicles.customer_id',$customer->id)
+         $paymentsTotal=DB::table('payments')
+         ->whereDate('transaction_date','<',$date)
+         ->where('customer_id',$customer->id)
          ->sum('amount');
 
-        $dailyRefundsTotal=DB::table('daily_payments')
-         ->join('vehicles','vehicles.id','=','daily_payments.vehicle_id')
-         ->join('customers','customers.id','=','vehicles.customer_id')
-         ->whereDate('daily_payments.transaction_date','<',$date)
-         ->where('daily_payments.type','Credit')
-         ->where('vehicles.customer_id',$customer->id)
+        $creditsTotal=DB::table('credits')
+         ->where('customer_id',$customer->id)
+         ->whereDate('transaction_date','<',$date)
          ->sum('amount');
 
-        $creditsTotal=DB::table('vehicle_credits')
-         ->join('vehicles','vehicles.id','=','vehicle_credits.vehicle_id')
-         ->join('customers','vehicles.customer_id','=','customers.id')
-         ->where('customers.id',$customer->id)
-         ->whereDate('vehicle_credits.transaction_date','<',$date)
-         ->sum('amount');
-
-        $total=$dailyPaymentsTotal-($dailyRefundsTotal+$creditsTotal);
-
-        /*$transactions = DB::select( DB::raw("
+        $total=$paymentsTotal-$creditsTotal;
+       /* 
+        $transactions = DB::select( DB::raw("
                 select * from (
                      select id,transaction_date,amount,description from credit_payments
                      where customer_id=$customer->id
@@ -314,8 +335,85 @@ class CustomersController extends Controller
                      ) st
                      order by st.transaction_date asc
 
-                ") );*/
+                ") );
+            
 
-        return view('customers.statement',['transactions'=>$transactions,'customer'=>$customer,'total'=>$total,'date'=>$date]);
+  */        
+            view()->share(['transactions'=>$transactions,'customer'=>$customer,'total'=>$total,'date'=>$date]);
+            //PDF::setOptions(['dpi' => 150, 'defaultFont' => 'sans-serif']);
+            // pass view file
+            
+            $pdf = PDF::loadView('customers.statement2');
+            $pdf->setPaper('A4', 'Potrait');
+            // download pdf
+            return $pdf->download('customers.statement2.pdf');
+        
+        //return view('customers.statement',['transactions'=>$transactions,'customer'=>$customer,'total'=>$total,'date'=>$date]);
+    }
+    public function tyreStatementDate(Customer $customer){
+        
+        return view('tyres.customers.get-statement',['customer'=>$customer]);
+    }
+    public function tyreStatement(Customer $customer,Request $request){
+        
+                $this->validate($request,[
+                    'statement_date'=>'required',
+                    'to_date'=>'required'
+                    ]);
+               
+                $date=Carbon::createFromFormat('m/d/Y',$request['statement_date']);
+                $todate=Carbon::createFromFormat('m/d/Y',$request['to_date']);
+        
+        
+            
+                $payments=DB::table('payments')
+                 ->whereBetween('transaction_date',[$date,$todate])
+                 ->where('customer_id',$customer->id)
+                 ->where('type','TYRE')
+                 ->selectRaw("id,transaction_date,amount,type,description,'add' as statement_impact");
+        
+                 
+        
+                 $transactions=DB::table('credits')
+                 ->where('customer_id',$customer->id)
+                 ->where('type','TYRE')
+                 ->whereBetween('credits.transaction_date',[$date,$todate])
+                 ->selectRaw("id,transaction_date,amount,type,description,'minus' as statement_impact")
+                 ->union($payments)
+                 ->orderBy('transaction_date','asc')
+                 ->get();
+        
+                 $paymentsTotal=DB::table('payments')
+                 ->whereDate('transaction_date','<',$date)
+                 ->where('customer_id',$customer->id)
+                 ->where('type','TYRE')
+                 ->sum('amount');
+        
+                $creditsTotal=DB::table('credits')
+                 ->where('customer_id',$customer->id)
+                 ->where('type','TYRE')
+                 ->whereDate('transaction_date','<',$date)
+                 ->sum('amount');
+        
+                $total=$paymentsTotal-$creditsTotal;
+
+                view()->share(['transactions'=>$transactions,'customer'=>$customer,'total'=>$total,'date'=>$date]);
+                //PDF::setOptions(['dpi' => 150, 'defaultFont' => 'sans-serif']);
+                // pass view file
+                
+                $pdf = PDF::loadView('tyres.customers.statement2');
+                $pdf->setPaper('A4', 'Potrait');
+                // download pdf
+                return $pdf->download('tyres.customers.statement2.pdf');
+        
+                //return view('tyres.customers.statement',['transactions'=>$transactions,'customer'=>$customer,'total'=>$total,'date'=>$date]);
+    }
+    public function overPayments(){
+        $customers=Customer::paginate(50);
+        return view('customers.overpayments.index',['customers'=>$customers]);
+    }
+    public function underPayments(){
+        $customers=Customer::paginate(50);
+        return view('customers.underpayments.index',['customers'=>$customers]);
     }
 }

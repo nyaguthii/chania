@@ -34,5 +34,10 @@ return [
         'key' => env('STRIPE_KEY'),
         'secret' => env('STRIPE_SECRET'),
     ],
+    'sms'=>[
+        'username'=>env('SMS_USERNAME'),
+        'key'=>env('SMS_KEY'),
+        'environment'=>env('SMS_ENVIRONMENT'),
+    ]
 
 ];

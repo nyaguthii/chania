@@ -138,9 +138,9 @@
                 </tr>
               @foreach($policy->paymentSchedules as $paymentSchedule)
                 <tr>
-                  <td></td>
+                  <td><a href="{{route('paymentSchedules.edit',['paymentSchedule'=>$paymentSchedule->id])}}" class="btn btn-xs btn-warning">edit</a></td>
                   <td>{{Carbon\Carbon::parse($paymentSchedule->due_date)->format('d-m-Y')}}</td>
-                  <td>{{$paymentSchedule->amount}}</td>
+                  <td>{{number_format($paymentSchedule->amount)}}</td>
                   <td>{{$paymentSchedule->lifeline_status}}</td>
                   <td>
                     <span 
@@ -156,9 +156,9 @@
                   <td>
                   @if($paymentSchedule->lifeline_status === 'active')
                   @if($paymentSchedule->status === 'open')
-                  <a href="{{route('payments.create',['paymentSchedule'=>$paymentSchedule->id])}}" class="btn btn-xs btn-info">Take Payment</a>
+                  <a href="{{route('prepayments.create',['paymentSchedule'=>$paymentSchedule->id])}}" class="btn btn-xs btn-info">Take Payment</a>
                   @elseif($paymentSchedule->status === 'paid')
-                  <form action="{{route('payments.update',['paymentSchedule'=>$paymentSchedule->id])}}" method="POST">
+                  <form action="{{route('prepayments.update',['paymentSchedule'=>$paymentSchedule->id])}}" method="POST">
                   {{ csrf_field() }}
                   <button type="submit" class="btn btn-xs btn-warning">Reverse Payment</button>
                   </form>
@@ -168,6 +168,11 @@
                 </tr>  
               @endforeach
               </table>
+            </div>
+            <div class="box-footer">
+              <button type="button" class="btn btn-primary pull-left"> Total Premium:Kshs {{number_format($policy->paymentSchedules->sum('amount'))}} </button>
+              <button type="button" class="btn btn-success pull-left"> Total Paid:Kshs {{number_format($policy->paymentSchedules->where('status','paid')->sum('amount'))}} </button>
+              <button type="button" class="btn btn-danger pull-left">Balance:Kshs {{number_format($policy->paymentSchedules->sum('amount')-$policy->paymentSchedules->where('status','paid')->sum('amount'))}} </button>
             </div>
             <!-- /.box-body -->
           </div>

@@ -4,26 +4,30 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="csrf-token" content="{{ csrf_token() }}" />
+  <meta name="csrf-token" content="{{ csrf_token() }}">
   <title>Chania Sacco</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <!-- Bootstrap 3.3.6 -->
 
   <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}">
-  <!-- Font Awesome -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css">
   <!-- Ionicons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
+ 
   <!-- Theme style -->
   <link rel="stylesheet" href="{{ asset('css/AdminLTE.min.css') }}">
   <!-- AdminLTE Skins. Choose a skin from the css/skins
        folder instead of downloading all of them to reduce the load. -->
+
+  <script>
+    var myurl = "{{url('/')}}";
+  </script>    
   <link rel="stylesheet" href="{{ asset('css/_all-skins.min.css') }}">
   <link rel="stylesheet" href="{{ asset('css/datepicker3.css') }}">
   <link rel="stylesheet" href="{{ asset('css/flash.css') }}">
+  <link rel="stylesheet" href="{{ asset('css/receipt.css') }}">
   <link rel="stylesheet" href="{{ asset('css/dataTables.bootstrap.css') }}">
-
+  <link rel="stylesheet" href="{{ asset('css/select2.min.css') }}">
+  <link rel="stylesheet" href="{{ asset('css/font-awesome.min.css') }}">
   <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
   <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
   <!--[if lt IE 9]>
@@ -67,7 +71,27 @@
 <script src="{{ asset('js/jquery.dataTables.min.js') }}"></script>
 <script src="{{ asset('js/dataTables.bootstrap.min.js')}}"></script>
 <script src="{{ asset('js/bootstrap-datepicker.js')}}"></script>
+<script src="{{ asset('js/jquery.validate.min.js')}}"></script>
+<script src="{{ asset('js/select2.full.min.js')}}"></script>
+<script src="{{ asset('js/products.js')}}"></script>
+<script src="{{ asset('js/orders.js')}}"></script>
+<script src="{{ asset('js/material-transactions.js')}}"></script>
+<script src="{{ asset('js/payments.js')}}"></script>
+<script src="{{ asset('js/members.js')}}"></script>
+<script src="{{ asset('js/refunds.js')}}"></script>
+<script src="{{ asset('js/suspensions.js')}}"></script>
+<script src="{{ asset('js/cancellations.js')}}"></script>
+<script src="{{ asset('js/policies.js')}}"></script>
+<script src="{{ asset('js/vehicles.js')}}"></script>
+<script src="{{ asset('js/commissions.js')}}"></script>
+<script src="{{ asset('js/claims.js')}}"></script>
 <script>
+  $.ajaxSetup({
+      headers: {
+          'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+          'CONTENT_TYPE':'application/json'
+      }
+  });
   $(function () {
     
     $("#example1").DataTable();
@@ -88,6 +112,12 @@
       autoclose: true
     });
     $('#datepicker-endorsement').datepicker({
+      autoclose: true
+    });
+    $('#accidentdatepicker').datepicker({
+      autoclose: true
+    });
+    $('#todatepicker').datepicker({
       autoclose: true
     });  
 
@@ -113,6 +143,18 @@
     $('#flash').delay(500).fadeIn('normal', function() {
          $(this).delay(2500).fadeOut();
     });
+    $('#cashierVehiclesTable').DataTable({
+            processing: true,
+            serverSide: true,
+            ajax:"{!!route('vehicles.ajax')!!}",
+            columns: [
+            {data: "id"},
+            {data: "registration"},
+            {data: "name"},
+            {data: "action", name: "action", orderable: false, searchable: false}
+            ]
+
+        });
     
     function getExpiryDate(){
 
@@ -137,7 +179,7 @@
               
       } 
       var d = new Date($('#datepicker').val() );
-      //x=x+1;
+       //x=x+1;
       d.setMonth(d.getMonth()+x);
       //d.setDate(d.getDate()+1)    
         $("#expiry-date").val(d.getMonth()+"/"+d.getDate()+"/"+d.getFullYear());
@@ -160,9 +202,14 @@
 
        }
     });
-    
+
+ 
+       
+ 
+
 
   });
+  
 
 </script>
 </body>

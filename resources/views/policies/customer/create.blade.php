@@ -76,17 +76,6 @@
                       </select>
                     </div>
                   <div class="form-group">
-                    <label>Expiry Date:</label>
-
-                    <div class="input-group date">
-                      <div class="input-group-addon">
-                        <i class="fa fa-calendar"></i>
-                      </div>
-                      <input type="text" class="form-control pull-right" id="expiry-date">
-                    </div>
-                    <!-- /.input group -->
-                  </div>
-                  <div class="form-group">
                     <label for="agent">Agent</label>
                     <input class="form-control" name="agent" placeholder="Agent" value="{{old('agent')}}">
                   </div>

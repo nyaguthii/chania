@@ -16,3 +16,10 @@ use Illuminate\Http\Request;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+Route::get('/customers','PaymentsApiController@customers');
+Route::get('/vehicles','PaymentsApiController@vehicles');
+Route::get('/types','PaymentsApiController@types');
+Route::post('/vehicles/payments','PaymentsApiController@vPayments');
+Route::post('/customers/payments','PaymentsApiController@cPayments');
+
+

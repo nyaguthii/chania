@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\domain\Customer;
 use App\domain\Credit;
+use App\domain\PaymentType;
 use Carbon\Carbon;
 
 class CreditsController extends Controller
@@ -16,18 +17,17 @@ class CreditsController extends Controller
     }
     public function index(Customer $customer){
 
-        $credits=$customer->credits()->orderBy('id','desc')->get();
-        $totalDaily=0;
-        foreach($customer->vehicles as $vehicle){
-           $totalDaily=$totalDaily + ($vehicle->dailyPayments()->where('type','Debit')->sum('amount')-$vehicle->dailyPayments()->where('type','Credit')->sum('amount')); 
-        }
-        return view('customers.credits.index',['customer'=>$customer,'credits'=>$credits,'totalDaily'=>$totalDaily]);
+        $credits=$customer->credits()->where('type','INSURANCE')->orderBy('id','desc')->paginate(50);
+
+        $payments=$customer->payments()->where('type','INSURANCE')->orderBy('id','desc')->get();
+        return view('customers.credits.index',['customer'=>$customer,'credits'=>$credits,'payments'=>$payments]);
 
     }
 
     public function create(Customer $customer){
 
-    	return view('customers.credits.create',['customer'=>$customer]);
+        $paymentTypes=PaymentType::all();
+    	return view('customers.credits.create',['customer'=>$customer,'paymentTypes'=>$paymentTypes]);
     }
     public function store(Customer $customer,Request $request){
 
@@ -35,14 +35,19 @@ class CreditsController extends Controller
 
     	$this->validate($request,[
     		'transaction_date'=>'required',
-    		'amount'=>'required'
+            'amount'=>'required',
+            'description'=>'required',
+            'type'=>'required'
     		]);
 
         $credit = new Credit();
         $credit->amount=$request['amount'];
         $credit->description=$request['description'];
         $credit->transaction_date=Carbon::createFromFormat('m/d/Y',$request['transaction_date']);
-        $credit->type="Manual";
+        $credit->type=$request['type'];
+        $credit->creation_method="Manual";
+        $credit->created_by=auth()->id();
+        
         $customer->credits()->save($credit);
 
 
@@ -51,15 +56,16 @@ class CreditsController extends Controller
 
     }
     public function edit(Credit $credit){
-
-        return view('customers.credits.edit',compact('credit'));
+        $paymentTypes=PaymentType::all();
+        return view('customers.credits.edit',['credit'=>$credit,'paymentTypes'=>$paymentTypes]);
 
     }
     public function update(Credit $credit,Request $request){
 
         $this->validate($request,[
             'transaction_date'=>'required',
-            'amount'=>'required|numeric'
+            'amount'=>'required|numeric',
+            'description'=>'required'
             ]);
 
         $credit->transaction_date=Carbon::createFromFormat('m/d/Y',$request['transaction_date']);

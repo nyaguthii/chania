@@ -67,14 +67,13 @@
                   <label >Pin </label>
                   <input name="pin" type="text" class="form-control"  placeholder="Pin" value="{{old('pin')}}">
                 </div>
+                <div class="form-group">
+                  @include('layouts.error')
+                </div>            
               <!-- /.form-group -->
             </div>
-
             <!-- /.col -->
           </div>
-          <row>
-            @include('layouts.error')
-          </row>
           <!-- /.row -->
         </div>
         <!-- /.box-body -->

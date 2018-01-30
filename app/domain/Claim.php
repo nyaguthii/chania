@@ -10,4 +10,8 @@ class Claim extends Model
 
     	return $this->belongsTo(Policy::class);
     }
+
+    public function excess(){
+    	return $this->hasOne(Excess::class);
+    }
 }

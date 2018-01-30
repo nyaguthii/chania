@@ -53,10 +53,17 @@
                       <label for="policy-id">Amount(Kshs)</label>
                       <input class="form-control" name="amount" id="amount" value="{{$credit->amount}}">
                     </div>
-                <div class="col-md-12">
-                  <div class="row">
-                  @include('layouts.error') 
-                </div>
+                    <div class="form-group">
+                      <label>Type</label>
+                      <select  class="form-control" name="type"  >
+                      @foreach($paymentTypes as $paymentType)
+                        <option>{{$paymentType->name}}</option>
+                      @endforeach      
+                      </select>
+                    </div>
+                    <div class="form-group">
+                    @include('layouts.error') 
+                    </div>
                 </div>
                 <!-- /.col -->
               </div>
